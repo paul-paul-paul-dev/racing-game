@@ -23,7 +23,7 @@ type DerivedWheelInfo = WheelInfo & Required<Pick<WheelInfoOptions, 'chassisConn
 export function Vehicle({ angularVelocity, children, position, rotation }: VehicleProps) {
   const defaultCamera = useThree((state) => state.camera)
   const [chassisBody, vehicleConfig, wheelInfo, wheels] = useStore((s) => [s.chassisBody, s.vehicleConfig, s.wheelInfo, s.wheels])
-  const { back, force, front, height, maxBrake, steer, maxSpeed, width } = vehicleConfig
+  const { back, front, height, maxBrake, maxSpeed, width } = vehicleConfig
 
   const wheelInfos = wheels.map((_, index): DerivedWheelInfo => {
     const length = index < 2 ? front : back
@@ -56,12 +56,16 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
   let swaySpeed = 0
   let swayTarget = 0
   let swayValue = 0
+  let my_force = 0
+  let my_steer = 0
 
   useFrame((state, delta) => {
     camera = getState().camera
     editor = getState().editor
     controls = getState().controls
     speed = mutation.speed
+    my_force = mutation.force
+    my_steer = mutation.steer
 
     isBoosting = controls.boost && mutation.boost > 0
 
@@ -71,10 +75,10 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
 
     engineValue = lerp(
       engineValue,
-      controls.forward || controls.backward ? force * (controls.forward && !controls.backward ? (isBoosting ? -1.5 : -1) : 1) : 0,
+      controls.forward || controls.backward ? my_force * (controls.forward && !controls.backward ? (isBoosting ? -1.5 : -1) : 1) : 0,
       delta * 20,
     )
-    steeringValue = lerp(steeringValue, controls.left || controls.right ? steer * (controls.left && !controls.right ? 1 : -1) : 0, delta * 20)
+    steeringValue = lerp(steeringValue, controls.left || controls.right ? my_steer * (controls.left && !controls.right ? 1 : -1) : 0, delta * 20)
     for (i = 2; i < 4; i++) api.applyEngineForce(speed < maxSpeed ? engineValue : 0, i)
     for (i = 0; i < 2; i++) api.setSteeringValue(steeringValue, i)
     for (i = 2; i < 4; i++) api.setBrake(controls.brake ? (controls.forward ? maxBrake / 1.5 : maxBrake) : 0, i)

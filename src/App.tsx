@@ -8,18 +8,22 @@ import type { DirectionalLight } from 'three'
 
 import { HideMouse, Keyboard } from './controls'
 import { Cameras } from './effects'
-import { BoundingBox, Ramp, Track, Vehicle, Goal, Train, Heightmap } from './models'
+import { BoundingBox, Vehicle } from './models'
+// import { BoundingBox, Ramp, Track, Vehicle, Goal, Train, Heightmap } from './models'
+
 import { angularVelocity, levelLayer, position, rotation, useStore } from './store'
 import { Checkpoint, Clock, Speed, Minimap, Intro, Help, Editor, LeaderBoard, Finished, PickColor } from './ui'
 import { useToggle } from './useToggle'
+import { GamePad } from './controls/GamePad'
+import { TestHeightmap, TestTrack } from './models/test-track'
 
 const layers = new Layers()
 layers.enable(levelLayer)
 
 export function App(): JSX.Element {
   const [light, setLight] = useState<DirectionalLight | null>(null)
-  const [actions, dpr, editor, shadows] = useStore((s) => [s.actions, s.dpr, s.editor, s.shadows])
-  const { onCheckpoint, onFinish, onStart } = actions
+  const [, dpr, editor, shadows] = useStore((s) => [s.actions, s.dpr, s.editor, s.shadows])
+  // const { onCheckpoint, onFinish, onStart } = actions
 
   const ToggledCheckpoint = useToggle(Checkpoint, 'checkpoint')
   const ToggledDebug = useToggle(Debug, 'debug')
@@ -55,16 +59,18 @@ export function App(): JSX.Element {
               {light && <primitive object={light.target} />}
               <Cameras />
             </Vehicle>
-            <Train />
+            {/* <Train />
             <Ramp args={[30, 6, 8]} position={[2, -1, 168.55]} rotation={[0, 0.49, Math.PI / 15]} />
             <Heightmap elementSize={0.5085} position={[327 - 66.5, -3.3, -473 + 213]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
             <Goal args={[0.001, 10, 18]} onCollideBegin={onStart} rotation={[0, 0.55, 0]} position={[-27, 1, 180]} />
             <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, -1.2, 0]} position={[-104, 1, -189]} />
-            <Goal args={[0.001, 10, 18]} onCollideBegin={onCheckpoint} rotation={[0, -0.5, 0]} position={[-50, 1, -5]} />
+            <Goal args={[0.001, 10, 18]} onCollideBegin={onCheckpoint} rotation={[0, -0.5, 0]} position={[-50, 1, -5]} /> */}
+            <TestHeightmap elementSize={0.5085} position={[327 - 66.5, -3.3, -473 + 213]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
             <BoundingBox {...{ depth: 512, height: 100, position: [0, 40, 0], width: 512 }} />
           </ToggledDebug>
         </Physics>
-        <Track />
+        {/* <Track /> */}
+        <TestTrack />
         <Environment files="textures/dikhololo_night_1k.hdr" />
         <ToggledMap />
         <ToggledOrbitControls />
@@ -80,6 +86,7 @@ export function App(): JSX.Element {
       <PickColor />
       <HideMouse />
       <Keyboard />
+      <GamePad />
     </Intro>
   )
 }

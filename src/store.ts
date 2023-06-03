@@ -23,10 +23,10 @@ export const vehicleConfig = {
   height: -0.3,
   front: 1.35,
   back: -1.3,
-  steer: 0.3,
-  force: 1800,
-  maxBrake: 65,
-  maxSpeed: 88,
+  steer: 0.6,
+  force: 2500,
+  maxBrake: 100,
+  maxSpeed: 100,
 } as const
 
 type VehicleConfig = typeof vehicleConfig
@@ -237,6 +237,8 @@ interface Mutation {
   sliding: boolean
   speed: number
   velocity: [number, number, number]
+  force: number
+  steer: number
 }
 
 export const mutation: Mutation = {
@@ -246,6 +248,8 @@ export const mutation: Mutation = {
   sliding: false,
   speed: 0,
   velocity: [0, 0, 0],
+  force: 0,
+  steer: 0,
 }
 
 // Make the store shallow compare by default
