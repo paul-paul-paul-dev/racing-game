@@ -35,7 +35,7 @@ function createHeightfieldMatrix(image: HTMLImageElement): number[][] {
     for (let y = 0; y < height; y++) {
       // pixel data is [r, g, b, alpha]
       // since image is in b/w -> any rgb val
-      p = 14 //(data[4 * (y * width + x)] * scale) / 255
+      p = 30 // (data[4 * (y * width + x)] * scale) / 255
       row[y] = Number(Math.max(0, p).toPrecision(2)) / 4
     }
     matrix[x] = [...row]
@@ -47,7 +47,7 @@ function createHeightfieldMatrix(image: HTMLImageElement): number[][] {
 type HeightmapProps = Required<Pick<HeightfieldProps, 'position' | 'rotation'>> & Required<Pick<HeightfieldArgs['1'], 'elementSize'>>
 
 export function TestHeightmap({ elementSize, position, rotation }: HeightmapProps) {
-  const heightmap = useTexture('/textures/heightmap_1024.png')
+  const heightmap = useTexture('/textures/track_height.png')
   const heights = useAsset<number[][], Texture[]>(async () => createHeightfieldMatrix(heightmap.image), heightmap)
   useHeightfield(() => ({ args: [heights, { elementSize }], position, rotation }), undefined, [elementSize, position, rotation])
   return null

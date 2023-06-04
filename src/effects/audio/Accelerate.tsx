@@ -5,19 +5,19 @@ import { MathUtils } from 'three'
 
 import type { PositionalAudio as PositionalAudioImpl } from 'three'
 
-import { mutation, useStore } from '../../store'
+import { mutation } from '../../store'
 
 const { lerp } = MathUtils
 
 export const AccelerateAudio = () => {
   const ref = useRef<PositionalAudioImpl>(null)
-  const maxSpeed = useStore(({ vehicleConfig: { maxSpeed } }) => maxSpeed)
+  // const maxSpeed = useStore(({ vehicleConfig: { maxSpeed } }) => maxSpeed)
 
-  const getVolume = () => (2 * mutation.speed) / maxSpeed
+  const getVolume = () => ((1.5 * mutation.rpmTarget) / 15000) * 0.5
 
   useFrame((_, delta) => {
     ref.current?.setVolume(getVolume())
-    ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget + 0.5, delta * 10))
+    ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 10000 + 0.5, delta * 10))
   })
 
   useEffect(() => {

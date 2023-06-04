@@ -41,6 +41,7 @@ export const Wheel = forwardRef<Group, WheelProps>(({ leftSide, ...props }, ref)
     ref,
     [radius],
   )
+
   return (
     <group ref={ref} dispose={null}>
       <group scale={scale}>

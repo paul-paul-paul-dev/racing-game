@@ -8,11 +8,9 @@ import type { DirectionalLight } from 'three'
 
 import { HideMouse, Keyboard } from './controls'
 import { Cameras } from './effects'
-import { BoundingBox, Vehicle } from './models'
-// import { BoundingBox, Ramp, Track, Vehicle, Goal, Train, Heightmap } from './models'
-
+import { Vehicle, Goal } from './models'
 import { angularVelocity, levelLayer, position, rotation, useStore } from './store'
-import { Checkpoint, Clock, Speed, Minimap, Intro, Help, Editor, LeaderBoard, Finished, PickColor } from './ui'
+import { Clock, Speed, Intro, Editor } from './ui'
 import { useToggle } from './useToggle'
 import { GamePad } from './controls/GamePad'
 import { TestHeightmap, TestTrack } from './models/test-track'
@@ -22,16 +20,16 @@ layers.enable(levelLayer)
 
 export function App(): JSX.Element {
   const [light, setLight] = useState<DirectionalLight | null>(null)
-  const [, dpr, editor, shadows] = useStore((s) => [s.actions, s.dpr, s.editor, s.shadows])
-  // const { onCheckpoint, onFinish, onStart } = actions
+  const [actions, dpr, editor, shadows] = useStore((s) => [s.actions, s.dpr, s.editor, s.shadows])
+  const { onFinish, onStart } = actions
 
-  const ToggledCheckpoint = useToggle(Checkpoint, 'checkpoint')
+  // const ToggledCheckpoint = useToggle(Checkpoint, 'checkpoint')
+  // const ToggledFinished = useToggle(Finished, 'finished')
+  // const ToggledMap = useToggle(Minimap, 'map')
+  const ToggledStats = useToggle(Stats, 'stats')
   const ToggledDebug = useToggle(Debug, 'debug')
   const ToggledEditor = useToggle(Editor, 'editor')
-  const ToggledFinished = useToggle(Finished, 'finished')
-  const ToggledMap = useToggle(Minimap, 'map')
   const ToggledOrbitControls = useToggle(OrbitControls, 'editor')
-  const ToggledStats = useToggle(Stats, 'stats')
 
   return (
     <Intro>
@@ -53,37 +51,37 @@ export function App(): JSX.Element {
           castShadow
         />
         <PerspectiveCamera makeDefault={editor} fov={75} position={[0, 20, 20]} />
-        <Physics allowSleep broadphase="SAP" defaultContactMaterial={{ contactEquationRelaxation: 4, friction: 1e-3 }}>
+        <Physics gravity={[0, -9.81, 0]} allowSleep broadphase="SAP" defaultContactMaterial={{ contactEquationRelaxation: 4, friction: 1.6 }}>
           <ToggledDebug scale={1.0001} color="white">
             <Vehicle angularVelocity={[...angularVelocity]} position={[...position]} rotation={[...rotation]}>
               {light && <primitive object={light.target} />}
               <Cameras />
             </Vehicle>
+            <Goal args={[0.001, 10, 18]} onCollideBegin={onStart} rotation={[0, Math.PI, 0]} position={[10, 10, 50]} />
+            <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, Math.PI, 0]} position={[-10, 10, 50]} />
             {/* <Train />
             <Ramp args={[30, 6, 8]} position={[2, -1, 168.55]} rotation={[0, 0.49, Math.PI / 15]} />
             <Heightmap elementSize={0.5085} position={[327 - 66.5, -3.3, -473 + 213]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
-            <Goal args={[0.001, 10, 18]} onCollideBegin={onStart} rotation={[0, 0.55, 0]} position={[-27, 1, 180]} />
-            <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, -1.2, 0]} position={[-104, 1, -189]} />
-            <Goal args={[0.001, 10, 18]} onCollideBegin={onCheckpoint} rotation={[0, -0.5, 0]} position={[-50, 1, -5]} /> */}
-            <TestHeightmap elementSize={0.5085} position={[327 - 66.5, -3.3, -473 + 213]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
-            <BoundingBox {...{ depth: 512, height: 100, position: [0, 40, 0], width: 512 }} />
+            <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, -1.2, 0]} position={[-104, 1, -189]} />*/}
+            <TestHeightmap elementSize={0.8} position={[(1920 * 0.8) / 2, 0, -(1080 * 0.8) / 2]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
+            {/* <BoundingBox {...{ depth: 1920, height: 10, position: [0, 0, -((1024 * 6) / 2)], width: 1080 }} /> */}
           </ToggledDebug>
         </Physics>
         {/* <Track /> */}
-        <TestTrack />
+        <TestTrack scale={1.6} rotation={[0, -Math.PI / 2, 0]} position={[-100, 5.5, -63.5]} />
         <Environment files="textures/dikhololo_night_1k.hdr" />
-        <ToggledMap />
+        {/* <ToggledMap /> */}
         <ToggledOrbitControls />
       </Canvas>
       <Clock />
       <ToggledEditor />
-      <ToggledFinished />
-      <Help />
+      {/* <ToggledFinished />
+      <Help /> */}
       <Speed />
       <ToggledStats />
-      <ToggledCheckpoint />
+      {/* <ToggledCheckpoint />
       <LeaderBoard />
-      <PickColor />
+      <PickColor /> */}
       <HideMouse />
       <Keyboard />
       <GamePad />

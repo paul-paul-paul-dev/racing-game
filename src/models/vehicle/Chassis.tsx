@@ -63,11 +63,11 @@ interface ChassisGLTF extends GLTF {
 
 type MaterialMesh = Mesh<BoxBufferGeometry, MeshStandardMaterial>
 
-const gears = 10
 const c = new Color()
 const v = new Vector3()
+const maxDownForce = 4
 
-export const Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args = [2, 1.1, 4.7], mass = 500, children, ...props }, ref) => {
+export const Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args = [2, 1.1, 4.7], mass = 798, children, ...props }, ref) => {
   const glass = useRef<MaterialMesh>(null!)
   const brake = useRef<MaterialMesh>(null!)
   const wheel = useRef<Group>(null)
@@ -97,9 +97,10 @@ export const Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args = 
     () =>
       api.velocity.subscribe((velocity) => {
         const speed = v.set(...velocity).length()
-        const gearPosition = speed / (maxSpeed / gears)
-        const rpmTarget = Math.max(((gearPosition % 1) + Math.log(gearPosition)) / 6, 0)
-        Object.assign(mutation, { rpmTarget, speed, velocity })
+        // const gearPosition = speed / (maxSpeed / gears)
+        // const rpmTarget = Math.max(((gearPosition % 1) + Math.log(gearPosition)) / 2, 0)
+        const downForce = (-9.81 * (speed / maxSpeed) * maxDownForce + 1) * 1000
+        Object.assign(mutation, { downForce, speed, velocity })
       }),
     [maxSpeed],
   )
@@ -107,6 +108,7 @@ export const Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args = 
   let camera: Camera
   let controls: Controls
   useFrame((_, delta) => {
+    api.applyForce([0, mutation.downForce, 0], [0, 0, 0]) // downforce
     camera = getState().camera
     controls = getState().controls
     brake.current.material.color.lerp(c.set(controls.brake ? '#555' : 'white'), delta * 10)

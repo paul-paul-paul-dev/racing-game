@@ -1,4 +1,3 @@
-import { Boost } from './Boost'
 import { Gauge } from './Gauge'
 import { Text } from './Text'
 
@@ -7,7 +6,7 @@ export function Speed(): JSX.Element {
     <div className="speed">
       <Gauge />
       <Text />
-      <Boost />
+      {/* <Boost /> */}
     </div>
   )
 }

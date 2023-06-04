@@ -17,7 +17,7 @@ export const EngineAudio = () => {
 
   useFrame((_, delta) => {
     ref.current?.setVolume(getVolume())
-    ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget + 1, delta * 10))
+    ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 10000 + 1, delta * 10))
   })
 
   useEffect(() => {

@@ -15,18 +15,18 @@ export const cameras = ['DEFAULT', 'FIRST_PERSON', 'BIRD_EYE'] as const
 export const dpr = 1.5 as const
 export const levelLayer = 1 as const
 export const maxBoost = 100 as const
-export const position = [-110, 0.75, 220] as const
-export const rotation = [0, Math.PI / 2 + 0.35, 0] as const
+export const position = [0, 10, 55] as const
+export const rotation = [0, Math.PI / 2, 0] as const
 
 export const vehicleConfig = {
   width: 1.7,
   height: -0.3,
-  front: 1.35,
+  front: 1.4,
   back: -1.3,
-  steer: 0.6,
-  force: 2500,
+  steer: 0.2,
+  force: 3200,
   maxBrake: 100,
-  maxSpeed: 100,
+  maxSpeed: 100, // mph
 } as const
 
 type VehicleConfig = typeof vehicleConfig
@@ -49,15 +49,15 @@ export type WheelInfo = Required<
 
 export const wheelInfo: WheelInfo = {
   axleLocal: [-1, 0, 0],
-  customSlidingRotationalSpeed: -0.01,
+  customSlidingRotationalSpeed: -0.1, // -0.01
   directionLocal: [0, -1, 0],
-  frictionSlip: 1.5,
+  frictionSlip: 10000, // 1.5
   radius: 0.38,
-  rollInfluence: 0,
-  sideAcceleration: 3,
+  rollInfluence: 0.01,
+  sideAcceleration: 2, // 3
   suspensionRestLength: 0.35,
-  suspensionStiffness: 30,
-  useCustomSlidingRotationalSpeed: true,
+  suspensionStiffness: 50,
+  useCustomSlidingRotationalSpeed: true, // true
 }
 
 export const booleans = {
@@ -70,7 +70,7 @@ export const booleans = {
   pickcolor: false,
   ready: false,
   shadows: true,
-  stats: false,
+  stats: true,
   sound: true,
 }
 
@@ -187,12 +187,16 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
       if (start && !finished) {
         set({ finished: Math.max(Date.now() - start, 0) })
       }
+      console.log(Math.max(Date.now() - start))
     },
     onStart: () => {
       set({ finished: 0, start: Date.now() })
     },
     reset: () => {
       mutation.boost = maxBoost
+      mutation.gear = 0
+      mutation.force = 0
+      mutation.rpmTarget = 1000
 
       set((state) => {
         state.api?.angularVelocity.set(...angularVelocity)
@@ -200,7 +204,7 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
         state.api?.rotation.set(...rotation)
         state.api?.velocity.set(0, 0, 0)
 
-        return { ...state, finished: 0, start: 0 }
+        return { ...state, start: 0 }
       })
     },
   }
@@ -239,17 +243,21 @@ interface Mutation {
   velocity: [number, number, number]
   force: number
   steer: number
+  gear: number
+  downForce: number
 }
 
 export const mutation: Mutation = {
   // Everything in here is mutated to avoid even slight overhead
   boost: maxBoost,
-  rpmTarget: 0,
+  rpmTarget: 1000,
   sliding: false,
   speed: 0,
   velocity: [0, 0, 0],
   force: 0,
   steer: 0,
+  gear: 0,
+  downForce: 1,
 }
 
 // Make the store shallow compare by default

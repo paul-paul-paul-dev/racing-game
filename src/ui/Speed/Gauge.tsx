@@ -3,7 +3,7 @@ import { addEffect } from '@react-three/fiber'
 
 import type { SVGProps } from 'react'
 
-import { useStore, mutation } from '../../store'
+import { mutation } from '../../store'
 
 type BackgroundProps = Pick<SVGProps<SVGStopElement>, 'offset'>
 
@@ -32,11 +32,11 @@ const Foreground = (): JSX.Element => (
   </svg>
 )
 
-const getOffsetFactory = (maxSpeed: number) => () => `${Math.max(1 - mutation.speed / maxSpeed, 0).toFixed(2)}`
+const getOffsetFactory = (maxSpeed: number) => () => `${Math.max(1 - mutation.rpmTarget / maxSpeed, 0).toFixed(2)}`
 
 export const Gauge = () => {
   const ref = useRef<SVGStopElement>(null)
-  const maxSpeed = useStore((state) => state.vehicleConfig.maxSpeed)
+  const maxSpeed = 15000 // useStore((state) => state.vehicleConfig.maxSpeed)
 
   const getOffset = getOffsetFactory(maxSpeed)
 

@@ -23,7 +23,7 @@ body {
   top: 60px;
   left: 60px;
   font-weight: 200;
-  font-size: 5em;
+  font-size: 3em;
   font-variant-numeric: tabular-nums;
   letter-spacing: -5px;
 }
@@ -168,7 +168,7 @@ body {
   position: absolute;
   bottom: 60px;
   right: 60px;
-  font-size: 2.5em;
+  font-size: 1.8em;
   font-weight: 200;
   font-variant-numeric: tabular-nums;
   letter-spacing: -2px;
@@ -196,7 +196,9 @@ body {
 }
 
 .speed-text {
-  margin-top: -40px;
+  margin-top: -180px;
+  display: flex;
+  flex-direction: column;
 }
 
 .boost-bar {
