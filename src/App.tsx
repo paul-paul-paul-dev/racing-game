@@ -8,22 +8,20 @@ import type { DirectionalLight } from 'three'
 
 import { HideMouse, Keyboard } from './controls'
 import { Cameras } from './effects'
-import { Vehicle, Goal } from './models'
+import { Vehicle } from './models'
 import { angularVelocity, levelLayer, position, rotation, useStore } from './store'
-import { Clock, Speed, Intro, Editor } from './ui'
+import { Clock, Speed, Intro, Editor, Checkpoint } from './ui'
 import { useToggle } from './useToggle'
 import { GamePad } from './controls/GamePad'
-import { TestHeightmap, TestTrack } from './models/test-track'
+import { TestHeightmap, TestTrack, TrackElements } from './models/test-track'
 
 const layers = new Layers()
 layers.enable(levelLayer)
 
 export function App(): JSX.Element {
   const [light, setLight] = useState<DirectionalLight | null>(null)
-  const [actions, dpr, editor, shadows] = useStore((s) => [s.actions, s.dpr, s.editor, s.shadows])
-  const { onFinish, onStart } = actions
-
-  // const ToggledCheckpoint = useToggle(Checkpoint, 'checkpoint')
+  const [, dpr, editor, shadows] = useStore((s) => [s.actions, s.dpr, s.editor, s.shadows])
+  const ToggledCheckpoint = useToggle(Checkpoint, 'latestCheckpoint')
   // const ToggledFinished = useToggle(Finished, 'finished')
   // const ToggledMap = useToggle(Minimap, 'map')
   const ToggledStats = useToggle(Stats, 'stats')
@@ -34,8 +32,8 @@ export function App(): JSX.Element {
   return (
     <Intro>
       <Canvas key={`${dpr}${shadows}`} dpr={[1, dpr]} shadows={shadows} camera={{ position: [0, 5, 15], fov: 50 }}>
-        <fog attach="fog" args={['white', 0, 500]} />
-        <Sky sunPosition={[100, 10, 100]} distance={1000} />
+        {/* <fog attach="fog" args={['white', 0, 500]} /> */}
+        <Sky sunPosition={[100, 10, 100]} distance={2000} />
         <ambientLight layers={layers} intensity={0.1} />
         <directionalLight
           ref={setLight}
@@ -51,14 +49,13 @@ export function App(): JSX.Element {
           castShadow
         />
         <PerspectiveCamera makeDefault={editor} fov={75} position={[0, 20, 20]} />
-        <Physics gravity={[0, -9.81, 0]} allowSleep broadphase="SAP" defaultContactMaterial={{ contactEquationRelaxation: 4, friction: 1.6 }}>
+        <Physics gravity={[0, -9.81, 0]} allowSleep broadphase="SAP" defaultContactMaterial={{ contactEquationRelaxation: 4, friction: 1.6 }} stepSize={1 / 60}>
           <ToggledDebug scale={1.0001} color="white">
             <Vehicle angularVelocity={[...angularVelocity]} position={[...position]} rotation={[...rotation]}>
               {light && <primitive object={light.target} />}
               <Cameras />
             </Vehicle>
-            <Goal args={[0.001, 10, 18]} onCollideBegin={onStart} rotation={[0, Math.PI, 0]} position={[10, 10, 50]} />
-            <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, Math.PI, 0]} position={[-10, 10, 50]} />
+            <TrackElements />
             {/* <Train />
             <Ramp args={[30, 6, 8]} position={[2, -1, 168.55]} rotation={[0, 0.49, Math.PI / 15]} />
             <Heightmap elementSize={0.5085} position={[327 - 66.5, -3.3, -473 + 213]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
@@ -79,8 +76,8 @@ export function App(): JSX.Element {
       <Help /> */}
       <Speed />
       <ToggledStats />
-      {/* <ToggledCheckpoint />
-      <LeaderBoard />
+      <ToggledCheckpoint />
+      {/* <LeaderBoard />
       <PickColor /> */}
       <HideMouse />
       <Keyboard />

@@ -23,6 +23,7 @@
     "react-dom": "^18.0.0",
     "react-gamepads": "^1.0.0",
     "three": "^0.139.0",
+    "three-pathfinding": "^1.2.0",
     "use-asset": "^1.0.4",
     "zustand": "^3.7.0"
   },

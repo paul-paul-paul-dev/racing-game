@@ -12,11 +12,11 @@ const TRANSMISSION_EFFICIENCY = 1.0
 const MAX_RPM = 15000
 const MIN_RPM = 1000
 const TOP_SPEED_VALUE = 400 //does not correlate to top speed -> examples -> 400 = 158 kph / 250 = 254kph / 300 = 212 kph / 200 = 317 kph
-const automatic = true
+let automatic = true
 
 export function GamePad() {
   const [, actions, binding] = useStore(({ actionInputMap, actions, binding }) => [actionInputMap, actions, binding])
-  const [, vehicleConfig, wheelInfo] = useStore((s) => [s.chassisBody, s.vehicleConfig, s.wheelInfo, s.wheels])
+  const [, vehicleConfig, wheelInfo, ,] = useStore((s) => [s.chassisBody, s.vehicleConfig, s.wheelInfo, s.wheels, s.api])
 
   const [shiftedUp, setShiftedUp] = useState(false)
   const [shiftedDown, setShiftedDown] = useState(false)
@@ -123,9 +123,15 @@ export function GamePad() {
     }
 
     actions['honk'](gamepads[0].buttons[3].pressed) // Y
+    if (gamepads[0].buttons[10].pressed) {
+      actions['reposition']()
+    }
+    if (gamepads[0].buttons[11].pressed) {
+      automatic = !automatic
+    }
 
     // DRS
-    actions['boost'](gamepads[0].buttons[0].pressed) // A
+    actions['drsUsed'](gamepads[0].buttons[0].pressed) // A
     if (gamepads[0].buttons[0].pressed) {
       force += force * 0.1 + (Math.floor(Math.random() * (500 - 300 + 1)) + 300)
     }

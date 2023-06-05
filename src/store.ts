@@ -13,6 +13,7 @@ export const angularVelocity = [0, 0.5, 0] as const
 export const cameras = ['DEFAULT', 'FIRST_PERSON', 'BIRD_EYE'] as const
 
 export const dpr = 1.5 as const
+export const NUMBER_OF_CHECKPOINTS = 16
 export const levelLayer = 1 as const
 export const maxBoost = 100 as const
 export const position = [0, 10, 55] as const
@@ -54,15 +55,15 @@ export const wheelInfo: WheelInfo = {
   frictionSlip: 10000, // 1.5
   radius: 0.38,
   rollInfluence: 0.01,
-  sideAcceleration: 2, // 3
+  sideAcceleration: 2.5, // 3
   suspensionRestLength: 0.35,
-  suspensionStiffness: 50,
+  suspensionStiffness: 60,
   useCustomSlidingRotationalSpeed: true, // true
 }
 
 export const booleans = {
   binding: false,
-  debug: false,
+  debug: false, // HERE
   editor: false,
   help: false,
   leaderboard: false,
@@ -84,7 +85,7 @@ export type Camera = typeof cameras[number]
 
 const controls = {
   backward: false,
-  boost: false,
+  drsUsed: false,
   brake: false,
   forward: false,
   honk: false,
@@ -101,7 +102,7 @@ export type ActionInputMap = Record<BindableActionName, string[]>
 
 const actionInputMap: ActionInputMap = {
   backward: ['arrowdown', 's'],
-  boost: ['shift'],
+  drsUsed: ['shift'],
   brake: [' '],
   camera: ['c'],
   editor: ['.'],
@@ -117,6 +118,12 @@ const actionInputMap: ActionInputMap = {
   sound: ['u'],
 }
 
+export type Checkpoint = {
+  time: number
+  id: number
+  bestTime: number
+}
+
 type Getter = GetState<IState>
 export type Setter = SetState<IState>
 
@@ -124,11 +131,15 @@ type BaseState = Record<Booleans, boolean>
 
 type BooleanActions = Record<Booleans, () => void>
 type ControlActions = Record<Control, (v: boolean) => void>
-type TimerActions = Record<'onCheckpoint' | 'onFinish' | 'onStart', () => void>
+type TimerActions = Record<'onFinish' | 'onStart' | 'reposition', () => void>
+type CheckpointActions = Record<'onCheckpoint', (id: number) => void>
+type DRSActions = Record<'onDRS', (drs: boolean) => void>
 
 type Actions = BooleanActions &
   ControlActions &
-  TimerActions & {
+  TimerActions &
+  DRSActions &
+  CheckpointActions & {
     camera: () => void
     reset: () => void
   }
@@ -136,16 +147,19 @@ type Actions = BooleanActions &
 export interface IState extends BaseState {
   actions: Actions
   api: PublicApi | null
-  bestCheckpoint: number
   camera: Camera
   chassisBody: RefObject<Group>
-  checkpoint: number
+  checkpoints: Map<number, Checkpoint>
+  timePenalty: number
+  latestCheckpoint: Checkpoint
   color: string
   controls: Controls
   actionInputMap: ActionInputMap
   keyBindingsWithError: number[]
   dpr: number
   finished: number
+  lastFinish: number
+  bestFinish: number
   get: Getter
   level: RefObject<Group>
   session: Session | null
@@ -175,25 +189,97 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
     ...booleanActions,
     ...controlActions,
     camera: () => set((state) => ({ camera: cameras[(cameras.indexOf(state.camera) + 1) % cameras.length] })),
-    onCheckpoint: () => {
+    onDRS: (drs: boolean) => {
+      mutation.drsAvailable = drs
+    },
+    onCheckpoint: (id: number) => {
       const { start } = get()
       if (start) {
-        const checkpoint = Date.now() - start
-        set({ checkpoint })
+        set((state) => {
+          // get the CP from the map
+          const checkpoint = state.checkpoints.get(id)
+          let timePenalty = state.timePenalty
+          let latestCheckpoint = state.latestCheckpoint
+          // cCP error
+          if (!checkpoint) return { ...state }
+
+          // if you skipped a checkpoint you will get a time penalty
+          if (latestCheckpoint.id != 0 && checkpoint.id - latestCheckpoint.id !== 1) {
+            const penalty = 3 * Math.pow(checkpoint.id - latestCheckpoint.id - 1, 2)
+            timePenalty += penalty
+            console.log('Time Penalty + ' + penalty)
+          }
+
+          // get the time on the CP
+          const checkpointTime = Date.now() - start
+
+          // check if time is better then best time
+          const isBetter = !checkpoint.bestTime || checkpoint.time < checkpoint.time
+
+          // set the CP values
+          checkpoint.time = checkpointTime
+          checkpoint.bestTime = isBetter ? checkpointTime : checkpoint.bestTime
+
+          // update the store CP Map
+          const checkpoints = state.checkpoints
+          checkpoints.set(id, checkpoint)
+
+          // update latestCP
+          latestCheckpoint = checkpoint
+
+          // upadte the state
+          return { ...state, checkpoints, latestCheckpoint, timePenalty }
+        })
       }
     },
     onFinish: () => {
-      const { finished, start } = get()
-      if (start && !finished) {
-        set({ finished: Math.max(Date.now() - start, 0) })
+      const { finished, start, timePenalty, bestFinish, lastFinish, latestCheckpoint } = get()
+      let timePenaltyFinish = timePenalty
+      if (latestCheckpoint.id !== NUMBER_OF_CHECKPOINTS) {
+        console.log('Penalty' + latestCheckpoint.id)
+        timePenaltyFinish += 3
       }
-      console.log(Math.max(Date.now() - start))
+      const lapTime = Math.max(Date.now() - start + timePenaltyFinish * 1000)
+      set({ lastFinish: Math.max(lapTime, 0) })
+      set({ timePenalty: 0 })
+      if (start && !finished) {
+        set({ finished: Math.max(lapTime, 0) })
+        const isBetter = !bestFinish || lastFinish < bestFinish
+        if (isBetter) {
+          set({ bestFinish: lapTime })
+        }
+      }
+      set((state) => {
+        state.api?.angularVelocity.set(...angularVelocity)
+        state.api?.position.set(...position)
+        state.api?.rotation.set(...rotation)
+        state.api?.velocity.set(0, 0, 0)
+        return { ...state, start: 0 }
+      })
     },
     onStart: () => {
-      set({ finished: 0, start: Date.now() })
+      set({ latestCheckpoint: { id: 0, time: 0, bestTime: 0 } })
+
+      set((state) => {
+        return { ...state, finished: 0, start: Date.now(), timePenalty: 0 }
+      })
+    },
+    reposition: () => {
+      mutation.gear = 1
+      mutation.force = 0
+      mutation.rpmTarget = 1000
+
+      set((state) => {
+        state.api?.angularVelocity.set(...angularVelocity)
+        state.api?.rotation.set(...rotation)
+        state.api?.velocity.set(0, 0, 0)
+
+        return { ...state, start: 0 }
+      })
     },
     reset: () => {
-      mutation.boost = maxBoost
+      mutation.drsUsed = false
+      mutation.drsAvailable = false
       mutation.gear = 0
       mutation.force = 0
       mutation.rpmTarget = 1000
@@ -214,10 +300,13 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
     actionInputMap,
     actions,
     api: null,
-    bestCheckpoint: 0,
     camera: cameras[0],
     chassisBody: createRef<Group>(),
-    checkpoint: 0,
+    bestFinish: 0,
+    lastFinish: 0,
+    timePenalty: 0,
+    latestCheckpoint: { id: 0, time: 0, bestTime: 0 },
+    checkpoints: new Map<number, Checkpoint>(Array.from({ length: NUMBER_OF_CHECKPOINTS }, (_, id) => [id + 1, { time: 0, id: id + 1, bestTime: 0 }])),
     color: '#FFFF00',
     controls,
     keyBindingsWithError: [],
@@ -236,7 +325,8 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
 })
 
 interface Mutation {
-  boost: number
+  drsUsed: boolean
+  drsAvailable: boolean
   rpmTarget: number
   sliding: boolean
   speed: number
@@ -249,7 +339,8 @@ interface Mutation {
 
 export const mutation: Mutation = {
   // Everything in here is mutated to avoid even slight overhead
-  boost: maxBoost,
+  drsUsed: false,
+  drsAvailable: false,
   rpmTarget: 1000,
   sliding: false,
   speed: 0,

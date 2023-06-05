@@ -41,7 +41,7 @@ type GLTFResult = GLTF & {
 const v = new Vector3()
 const maxDownForce = 3
 
-export const F1Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args = [2, 1.1, 4.7], mass = 798, children, ...props }, ref) => {
+export const F1Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args = [2, 0.6, 4.7], mass = 798, children, ...props }, ref) => {
   const { nodes, materials } = useGLTF('/models/chassi_f1.glb') as GLTFResult
 
   const crashAudio = useRef<PositionalAudioImpl>(null!)

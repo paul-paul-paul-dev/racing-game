@@ -21,6 +21,7 @@ type GLTFResult = GLTF & {
 
 export function TestTrack(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('/models/track.glb') as GLTFResult
+
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.Object_1.geometry} material={materials['Material.006']} />

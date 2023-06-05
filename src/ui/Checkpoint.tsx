@@ -1,29 +1,18 @@
-import { useEffect } from 'react'
-
-import { setState, useStore } from '../store'
+import { useStore } from '../store'
 import { readableTime } from './LeaderBoard'
 
 export function Checkpoint() {
-  const [bestCheckpoint, checkpoint] = useStore(({ bestCheckpoint, checkpoint }) => [bestCheckpoint, checkpoint])
+  const [latestCheckpoint] = useStore(({ latestCheckpoint }) => [latestCheckpoint])
 
-  const isBetter = !bestCheckpoint || checkpoint < bestCheckpoint
-  const diff = bestCheckpoint ? checkpoint - bestCheckpoint : checkpoint
-
-  useEffect(() => {
-    if (!checkpoint) return
-    const timeout = setTimeout(() => {
-      const best = checkpoint && isBetter ? checkpoint : bestCheckpoint
-      setState({ bestCheckpoint: best, checkpoint: 0 })
-    }, 3000)
-    return () => clearTimeout(timeout)
-  })
+  const isBetter = !latestCheckpoint.bestTime || latestCheckpoint.time < latestCheckpoint.bestTime
+  const diff = latestCheckpoint.bestTime ? latestCheckpoint.time - latestCheckpoint.bestTime : latestCheckpoint.time
 
   const color = isBetter ? 'green' : 'red'
   const split = `${isBetter ? '' : '+'}${readableTime(diff)}`
 
   return (
     <div className="checkpoint">
-      <p>{readableTime(checkpoint)}</p>
+      <p>{readableTime(latestCheckpoint.time)}</p>
       <p className={color}>{split}</p>
     </div>
   )
