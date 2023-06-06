@@ -13,7 +13,7 @@ export const EngineAudio = () => {
   const ref = useRef<PositionalAudioImpl>(null)
   const maxSpeed = useStore(({ vehicleConfig: { maxSpeed } }) => maxSpeed)
 
-  const getVolume = () => 1 - mutation.speed / maxSpeed
+  const getVolume = () => (1 - mutation.speed / maxSpeed) * 0.25
 
   useFrame((_, delta) => {
     ref.current?.setVolume(getVolume())

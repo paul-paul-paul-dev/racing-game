@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 
 import { mutation } from '../../store'
 
-const getSpeed = () => `${mutation.speed.toFixed()} mph / ${(mutation.speed * 1.60934).toFixed()} kph` // mph to kph
+const getSpeed = () => `${(mutation.speed * 1.60934).toFixed()} kph / ${mutation.speed.toFixed()} mph` // mph to kph
 const getGear = () => `${mutation.gear}`
 const getRPM = () => `${mutation.rpmTarget.toFixed(0)} RPM`
 const getForce = () => `${mutation.force.toFixed(0)} Nm`

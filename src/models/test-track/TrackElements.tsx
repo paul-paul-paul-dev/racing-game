@@ -1,42 +1,210 @@
 import { useStore } from '../../store'
 import { Goal } from '../Goal'
 
-const DEFAUL_TRACK_ELEMENTS_HEIGHT = 10
+const DEFAUL_TRACK_ELEMENTS_HEIGHT = 8
+
+type PyhsicalCheckpoint = {
+  positionX: number
+  positionZ: number
+  rotationY: number
+  drsZoneStart: boolean
+  drsZoneEnd: boolean
+  isStart: boolean
+  isFinish: boolean
+}
+const PHYSICAL_CHECKPOINTS: PyhsicalCheckpoint[] = [
+  {
+    positionX: -29,
+    positionZ: 50,
+    rotationY: Math.PI,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: true,
+    isFinish: false,
+  },
+  { positionX: 96.48261260986328, positionZ: 51.10379409790039, rotationY: 3.14, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
+  {
+    positionX: 174,
+    positionZ: -71,
+    rotationY: -Math.PI / 2,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: 90,
+    positionZ: -238,
+    rotationY: 0,
+    drsZoneStart: true,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  { positionX: -132.41595458984375, positionZ: -230.32301330566406, rotationY: 0.07, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
+  {
+    positionX: -286,
+    positionZ: -200,
+    rotationY: 0,
+    drsZoneStart: false,
+    drsZoneEnd: true,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -333,
+    positionZ: -137,
+    rotationY: Math.PI / 2,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -384.32080078125,
+    positionZ: -80.98174285888672,
+    rotationY: -3.07 + Math.PI,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -450,
+    positionZ: -80,
+    rotationY: 0,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -616,
+    positionZ: -169,
+    rotationY: -Math.PI / 2,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  { positionX: -608.2753295898438, positionZ: -336.1870422363281, rotationY: -2.03, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
+  { positionX: -524.955810546875, positionZ: -398.378662109375, rotationY: 3.13, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
+  {
+    positionX: -471,
+    positionZ: -398,
+    rotationY: Math.PI,
+    drsZoneStart: true,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: 441,
+    positionZ: -386,
+    rotationY: Math.PI,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  { positionX: 574.6893920898438, positionZ: -300.30316162109375, rotationY: 2.18, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
+  {
+    positionX: 615,
+    positionZ: 341,
+    rotationY: Math.PI / 2,
+    drsZoneStart: false,
+    drsZoneEnd: true,
+    isStart: false,
+    isFinish: false,
+  },
+  { positionX: 517.9679565429688, positionZ: 402.2641906738281, rotationY: 0.01, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
+  {
+    positionX: 471,
+    positionZ: 403,
+    rotationY: 0,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  { positionX: 298.54443359375, positionZ: 354.35406494140625, rotationY: -0.72, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
+  {
+    positionX: 225,
+    positionZ: 204,
+    rotationY: -Math.PI / 2,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: 94,
+    positionZ: 98,
+    rotationY: 0,
+    drsZoneStart: true,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -432,
+    positionZ: 101,
+    rotationY: 0,
+    drsZoneStart: false,
+    drsZoneEnd: true,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -541,
+    positionZ: 45,
+    rotationY: -Math.PI / 2,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -435,
+    positionZ: -14,
+    rotationY: Math.PI,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: false,
+  },
+  {
+    positionX: -35,
+    positionZ: 50,
+    rotationY: Math.PI,
+    drsZoneStart: false,
+    drsZoneEnd: false,
+    isStart: false,
+    isFinish: true,
+  },
+]
+
+export const NUMBER_OF_CHECKPOINTS = PHYSICAL_CHECKPOINTS.length - 3
 
 export function TrackElements() {
   const [actions] = useStore((s) => [s.actions])
-  const { onFinish, onStart, onCheckpoint } = actions
+  const { onFinish, onStart, onCheckpoint, onDRS } = actions
 
   return (
     <>
-      <Goal args={[0.001, 10, 18]} onCollideBegin={onStart} rotation={[0, Math.PI, 0]} position={[10, DEFAUL_TRACK_ELEMENTS_HEIGHT, 50]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(1)} rotation={[0, Math.PI, 0]} position={[94, DEFAUL_TRACK_ELEMENTS_HEIGHT, 48]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(2)} rotation={[0, Math.PI / 2, 0]} position={[174, DEFAUL_TRACK_ELEMENTS_HEIGHT, -71]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(3)} rotation={[0, Math.PI, 0]} position={[90, DEFAUL_TRACK_ELEMENTS_HEIGHT, -238]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(4)} rotation={[0, Math.PI, 0]} position={[-286, DEFAUL_TRACK_ELEMENTS_HEIGHT, -200]} />
-      <Goal
-        args={[0.001, 10, 18]}
-        onCollideBegin={() => onCheckpoint(5)}
-        rotation={[0, Math.PI / 2, 0]}
-        position={[-333, DEFAUL_TRACK_ELEMENTS_HEIGHT, -137]}
-      />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(6)} rotation={[0, Math.PI, 0]} position={[-450, DEFAUL_TRACK_ELEMENTS_HEIGHT, -80]} />
-      <Goal
-        args={[0.001, 10, 18]}
-        onCollideBegin={() => onCheckpoint(7)}
-        rotation={[0, Math.PI / 2, 0]}
-        position={[-616, DEFAUL_TRACK_ELEMENTS_HEIGHT, -169]}
-      />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(8)} rotation={[0, Math.PI, 0]} position={[-471, DEFAUL_TRACK_ELEMENTS_HEIGHT, -398]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(9)} rotation={[0, Math.PI, 0]} position={[441, DEFAUL_TRACK_ELEMENTS_HEIGHT, -386]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(10)} rotation={[0, Math.PI / 2, 0]} position={[619, DEFAUL_TRACK_ELEMENTS_HEIGHT, 341]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(11)} rotation={[0, Math.PI, 0]} position={[471, DEFAUL_TRACK_ELEMENTS_HEIGHT, 403]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(12)} rotation={[0, Math.PI / 2, 0]} position={[225, DEFAUL_TRACK_ELEMENTS_HEIGHT, 204]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(13)} rotation={[0, Math.PI, 0]} position={[94, DEFAUL_TRACK_ELEMENTS_HEIGHT, 98]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(14)} rotation={[0, Math.PI, 0]} position={[-432, DEFAUL_TRACK_ELEMENTS_HEIGHT, 101]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(15)} rotation={[0, Math.PI / 2, 0]} position={[-541, DEFAUL_TRACK_ELEMENTS_HEIGHT, 45]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={() => onCheckpoint(16)} rotation={[0, Math.PI, 0]} position={[-435, DEFAUL_TRACK_ELEMENTS_HEIGHT, -14]} />
-      <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, Math.PI, 0]} position={[-10, 8, 50]} />
+      {PHYSICAL_CHECKPOINTS.map((checkpoint, index) => (
+        <Goal
+          key={index}
+          args={[0.001, 2, 18]}
+          onCollideBegin={() => {
+            index === 0 ? onStart() : index === PHYSICAL_CHECKPOINTS.length - 1 ? onFinish() : onCheckpoint(index)
+            if (checkpoint.drsZoneStart) onDRS(true)
+            if (checkpoint.drsZoneEnd) onDRS(false)
+          }}
+          rotation={[0, checkpoint.rotationY, 0]}
+          position={[checkpoint.positionX, DEFAUL_TRACK_ELEMENTS_HEIGHT, checkpoint.positionZ]}
+        />
+      ))}
     </>
   )
 }

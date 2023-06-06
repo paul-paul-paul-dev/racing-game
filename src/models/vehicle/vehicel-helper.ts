@@ -35,7 +35,7 @@ interface TorqueData {
 
 export function getTorqueAtRPM(rpm: number): number {
   // Define your torque curve data resembling a Formula 1 car
-  const torqueCurve: TorqueData[] = [
+  /*
     { rpm: 1000, torque: 250 },
     { rpm: 3000, torque: 300 },
     { rpm: 5000, torque: 400 },
@@ -45,6 +45,18 @@ export function getTorqueAtRPM(rpm: number): number {
     { rpm: 11000, torque: 630 },
     { rpm: 13000, torque: 605 },
     { rpm: 14500, torque: 550 },
+    { rpm: 15000, torque: 0 }
+    */
+  const torqueCurve: TorqueData[] = [
+    { rpm: 1000, torque: 250 },
+    { rpm: 3000, torque: 300 },
+    { rpm: 5000, torque: 350 },
+    { rpm: 7000, torque: 420 },
+    { rpm: 9000, torque: 500 },
+    { rpm: 10000, torque: 620 },
+    { rpm: 11000, torque: 650 },
+    { rpm: 13000, torque: 450 },
+    { rpm: 14500, torque: 200 },
     { rpm: 15000, torque: 0 },
   ]
 
@@ -73,13 +85,7 @@ export function getTorqueAtRPM(rpm: number): number {
   return torque
 }
 
-export function calculateDrivingForce(
-  torqueRPM: number,
-  gearRatio: number,
-  differentialRatio = 3.42,
-  transmissionEfficiency: number,
-  wheelRadius: number,
-) {
+export function calculateDrivingForce(torqueRPM: number, gearRatio: number, differentialRatio = 3.42, transmissionEfficiency: number, wheelRadius: number) {
   return (torqueRPM * gearRatio * differentialRatio * transmissionEfficiency) / wheelRadius
 }
 
@@ -89,7 +95,7 @@ export function getRPMBySpeed(wheelRotationRate: number, gearRatio: number, diff
 
 export function getEngineBreakForce(rpm: number, gear: number, speed: number): number {
   const maxRpm = 15000
-  const maxSpeed = 200
+  const maxSpeed = 110
   const maxForce = 7500
 
   // Check if any of the parameters is 0
@@ -99,11 +105,11 @@ export function getEngineBreakForce(rpm: number, gear: number, speed: number): n
 
   // Calculate a normalized value for each parameter
   const normalizedRpm = rpm / maxRpm
-  const normalizedSpeed = speed / maxSpeed
+  const normalizedSpeed = speed / (maxSpeed + 0.3 * maxSpeed)
   const normalizedGear = (8 - gear + 1) / 8 // Assuming gear ranges from 1 to 8
 
   // Calculate the force based on the normalized parameters
-  const force = (maxForce * (normalizedRpm * 2 + normalizedSpeed + normalizedGear)) / 4
+  const force = (maxForce * (normalizedRpm * 2 + normalizedSpeed * 0.5 + normalizedGear)) / 4
 
   // Return the force, ensuring it falls within the desired range
   return Math.min(Math.max(0, force), maxForce)

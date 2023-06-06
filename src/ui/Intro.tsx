@@ -5,15 +5,14 @@ import { useProgress } from '@react-three/drei'
 import type { ReactNode } from 'react'
 
 import { useStore } from '../store'
-import { setupSession, unAuthenticateUser } from '../data'
+import { setupSession } from '../data'
 import { Keys } from './Keys'
-import { Auth } from './Auth'
 
 export function Intro({ children }: { children: ReactNode }): JSX.Element {
   const [clicked, setClicked] = useState(false)
   const [loading, setLoading] = useState(true)
   const { progress } = useProgress()
-  const [session, set] = useStore((state) => [state.session, state.set])
+  const [, set] = useStore((state) => [state.session, state.set])
 
   useEffect(() => {
     if (clicked && !loading) set({ ready: true })
@@ -38,7 +37,7 @@ export function Intro({ children }: { children: ReactNode }): JSX.Element {
               {loading ? `loading ${progress.toFixed()} %` : 'Click to start'}
             </a>
           </div>
-          {session?.user?.aud !== 'authenticated' ? (
+          {/* {session?.user?.aud !== 'authenticated' ? (
             <Auth />
           ) : (
             <div>
@@ -47,7 +46,7 @@ export function Intro({ children }: { children: ReactNode }): JSX.Element {
                 Logout
               </button>{' '}
             </div>
-          )}
+          )} */}
         </div>
         <Footer
           date="2. June"

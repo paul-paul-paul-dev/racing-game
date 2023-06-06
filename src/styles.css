@@ -199,6 +199,7 @@ body {
   margin-top: -180px;
   display: flex;
   flex-direction: column;
+  color: #9898ff;
 }
 
 .boost-bar {

@@ -23,7 +23,7 @@ type DerivedWheelInfo = WheelInfo & Required<Pick<WheelInfoOptions, 'chassisConn
 export function Vehicle({ angularVelocity, children, position, rotation }: VehicleProps) {
   const defaultCamera = useThree((state) => state.camera)
   const [chassisBody, vehicleConfig, wheelInfo, wheels] = useStore((s) => [s.chassisBody, s.vehicleConfig, s.wheelInfo, s.wheels])
-  const { back, front, height, maxBrake, maxSpeed, width } = vehicleConfig
+  const { back, front, height, maxSpeed, width } = vehicleConfig
 
   const wheelInfos = wheels.map((_, index): DerivedWheelInfo => {
     const length = index < 2 ? front : back
@@ -50,35 +50,30 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
   let controls: Controls
   let engineValue = 0
   let i = 0
-  // let isBoosting = false
   let speed = 0
   let steeringValue = 0
   // let swaySpeed = 0
   // let swayTarget = 0
   // let swayValue = 0
-  let my_force = 0
-  let my_steer = 0
+  let myForce = 0
+  let mySteer = 0
+  let myBreakForce = 0
 
   useFrame((state, delta) => {
     camera = getState().camera
     editor = getState().editor
     controls = getState().controls
     speed = mutation.speed
-    my_force = mutation.force
-    my_steer = mutation.steer
+    myForce = mutation.force
+    mySteer = mutation.steer
+    myBreakForce = mutation.breakForce
 
-    // isBoosting = controls.boost && mutation.boost > 0
-
-    // if (isBoosting) {
-    //   mutation.boost = Math.max(mutation.boost - 1, 0)
-    // }
-
-    engineValue = lerp(engineValue, controls.forward || controls.backward ? my_force * (controls.forward && !controls.backward ? -1 : 1) : 0, delta * 40)
-    steeringValue = lerp(steeringValue, controls.left || controls.right ? my_steer * (controls.left && !controls.right ? 1 : -1) : 0, delta * 20)
+    engineValue = lerp(engineValue, controls.forward || controls.backward ? myForce * (controls.forward && !controls.backward ? -1 : 1) : 0, delta * 40)
+    steeringValue = lerp(steeringValue, controls.left || controls.right ? mySteer * (controls.left && !controls.right ? 1 : -1) : 0, delta * 20)
     for (i = 2; i < 4; i++) api.applyEngineForce(speed < maxSpeed ? engineValue : 0, i)
     for (i = 0; i < 2; i++) api.setSteeringValue(steeringValue, i)
+    for (i = 0; i < 4; i++) api.setBrake(controls.brake ? myBreakForce : 0, i)
     // for (i = 2; i < 4; i++) api.setSteeringValue(-steeringValue * 0.1, i) // rear wheel steering
-    for (i = 0; i < 4; i++) api.setBrake(controls.brake ? (controls.forward ? maxBrake / 1.5 : maxBrake) : 0, i)
 
     if (!editor) {
       if (camera === 'FIRST_PERSON') {

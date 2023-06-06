@@ -13,7 +13,9 @@
         "files": ["*.tsx", "*.ts"],
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
-            "project": "tsconfig.json"
+            "project": "tsconfig.json",
+            // "tsconfigRootDir": "racing-game/",
+            "sourceType": "module"
         },
         "plugins": ["@typescript-eslint"],
         "rules": {

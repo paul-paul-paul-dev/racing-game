@@ -8,15 +8,15 @@ import type { Group } from 'three'
 import type { GetState, SetState, StateSelector } from 'zustand'
 
 import { keys } from './keys'
+import { NUMBER_OF_CHECKPOINTS } from './models/test-track'
 
 export const angularVelocity = [0, 0.5, 0] as const
 export const cameras = ['DEFAULT', 'FIRST_PERSON', 'BIRD_EYE'] as const
 
 export const dpr = 1.5 as const
-export const NUMBER_OF_CHECKPOINTS = 16
 export const levelLayer = 1 as const
 export const maxBoost = 100 as const
-export const position = [0, 10, 55] as const
+export const position = [-40, 8.5, 51.5] as const
 export const rotation = [0, Math.PI / 2, 0] as const
 
 export const vehicleConfig = {
@@ -24,10 +24,10 @@ export const vehicleConfig = {
   height: -0.3,
   front: 1.4,
   back: -1.3,
-  steer: 0.2,
+  steer: 0.25,
   force: 3200,
   maxBrake: 100,
-  maxSpeed: 100, // mph
+  maxSpeed: 115, // mph
 } as const
 
 type VehicleConfig = typeof vehicleConfig
@@ -191,6 +191,9 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
     camera: () => set((state) => ({ camera: cameras[(cameras.indexOf(state.camera) + 1) % cameras.length] })),
     onDRS: (drs: boolean) => {
       mutation.drsAvailable = drs
+      if (drs) {
+        beep()
+      }
     },
     onCheckpoint: (id: number) => {
       const { start } = get()
@@ -233,27 +236,29 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
       }
     },
     onFinish: () => {
-      const { finished, start, timePenalty, bestFinish, lastFinish, latestCheckpoint } = get()
-      let timePenaltyFinish = timePenalty
-      if (latestCheckpoint.id !== NUMBER_OF_CHECKPOINTS) {
-        console.log('Penalty' + latestCheckpoint.id)
-        timePenaltyFinish += 3
-      }
-      const lapTime = Math.max(Date.now() - start + timePenaltyFinish * 1000)
-      set({ lastFinish: Math.max(lapTime, 0) })
-      set({ timePenalty: 0 })
-      if (start && !finished) {
-        set({ finished: Math.max(lapTime, 0) })
-        const isBetter = !bestFinish || lastFinish < bestFinish
-        if (isBetter) {
+      const { finished, start, timePenalty, bestFinish, latestCheckpoint } = get()
+      if (start) {
+        let timePenaltyFinish = timePenalty
+        if (latestCheckpoint.id !== NUMBER_OF_CHECKPOINTS) {
+          console.log('Penalty' + latestCheckpoint.id + ' ' + NUMBER_OF_CHECKPOINTS)
+          timePenaltyFinish += 3
+        }
+        const lapTime = Math.max(Date.now() - start + timePenaltyFinish * 1000)
+        set({ lastFinish: Math.max(lapTime, 0) })
+        set({ timePenalty: 0 })
+        if (!bestFinish || lapTime < bestFinish) {
           set({ bestFinish: lapTime })
+        }
+        if (start && !finished) {
+          set({ finished: Math.max(lapTime, 0) })
         }
       }
       set((state) => {
-        state.api?.angularVelocity.set(...angularVelocity)
-        state.api?.position.set(...position)
-        state.api?.rotation.set(...rotation)
-        state.api?.velocity.set(0, 0, 0)
+        // don't reset after finish, just keep going
+        // state.api?.angularVelocity.set(...angularVelocity)
+        // state.api?.position.set(...position)
+        // state.api?.rotation.set(...rotation)
+        // state.api?.velocity.set(0, 0, 0)
         return { ...state, start: 0 }
       })
     },
@@ -274,7 +279,7 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
         state.api?.rotation.set(...rotation)
         state.api?.velocity.set(0, 0, 0)
 
-        return { ...state, start: 0 }
+        return { ...state }
       })
     },
     reset: () => {
@@ -332,6 +337,7 @@ interface Mutation {
   speed: number
   velocity: [number, number, number]
   force: number
+  breakForce: number
   steer: number
   gear: number
   downForce: number
@@ -346,6 +352,7 @@ export const mutation: Mutation = {
   speed: 0,
   velocity: [0, 0, 0],
   force: 0,
+  breakForce: 0,
   steer: 0,
   gear: 0,
   downForce: 1,
@@ -358,3 +365,36 @@ Object.assign(useStore, useStoreImpl)
 const { getState, setState } = useStoreImpl
 
 export { getState, setState, useStore }
+
+const myAudioContext = new AudioContext()
+
+function beep(duration = 80, frequency = 1000, volume = 5) {
+  return new Promise<void>((resolve, reject) => {
+    try {
+      const oscillatorNode = myAudioContext.createOscillator()
+      const gainNode = myAudioContext.createGain()
+      oscillatorNode.connect(gainNode)
+
+      // Set the oscillator frequency in hertz
+      oscillatorNode.frequency.value = frequency
+
+      // Set the type of oscillator
+      oscillatorNode.type = 'square'
+      gainNode.connect(myAudioContext.destination)
+
+      // Set the gain to the volume
+      gainNode.gain.value = volume * 0.01
+
+      // Start audio with the desired duration
+      oscillatorNode.start(myAudioContext.currentTime)
+      oscillatorNode.stop(myAudioContext.currentTime + duration * 0.001)
+
+      // Resolve the promise when the sound is finished
+      oscillatorNode.onended = () => {
+        resolve()
+      }
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
