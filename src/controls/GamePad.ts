@@ -143,9 +143,9 @@ export function GamePad() {
         gear += 1
       }
 
-      if (rpmTarget > 14200 && mutation.gear !== 8) {
+      if (rpmTarget > 12800 && mutation.gear !== 8) {
         gear += 1
-      } else if (rpmTarget < 9400 && gear !== 1) {
+      } else if (rpmTarget < 8000 && gear !== 1) {
         gear -= 1
       }
     } else {
@@ -168,12 +168,8 @@ export function GamePad() {
       }
     }
 
-    actions['honk'](gamepads[0].buttons[3].pressed) // Y
+    actions['honk'](gamepads[0].buttons[10].pressed) // LEFT STICK
 
-    if (gamepads[0].buttons[10].pressed) {
-      // LeftStick
-      actions['reposition']()
-    }
     if (gamepads[0].buttons[11].pressed) {
       // RightStick
       automatic = !automatic
