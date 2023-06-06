@@ -120,18 +120,19 @@ export function GamePad() {
     actions['right'](gamepads[0].axes[0] > 0.01) // LStick
 
     const relativeSpeed = mutation.speed / (vehicleConfig.maxSpeed + 0.1 * vehicleConfig.maxSpeed)
-    const speedFactor = Math.min(1, (-1 / 4) * Math.log(relativeSpeed) - 0.02)
+    const relativeSpeedFactor = (-1 / 4) * Math.log(relativeSpeed < 0.2 ? 0 : relativeSpeed) - 0.02
+    const speedFactor = Math.min(1, relativeSpeedFactor)
     // trying different speed factors
     // 1 - Math.pow(Math.sqrt(relativeSpeed), 3) + 2.1 * (relativeSpeed - Math.sqrt(relativeSpeed))
     // Math.min(1, ((-1/4) * Math.log(relativeSpeed))+ 0.02)
     // Math.max(0, 1 - Math.sqrt(relativeSpeed))
     const steer = Math.abs(Math.pow(gamepads[0].axes[0], 3) * vehicleConfig.steer * speedFactor) // LStick
-    console.log(
-      mutation.speed.toFixed(0) +
-        `(${relativeSpeed.toFixed(2)}) / ` +
-        Math.abs(1 * vehicleConfig.steer * speedFactor).toFixed(3) +
-        `(${speedFactor.toFixed(3)})`,
-    )
+    // console.log(
+    //   mutation.speed.toFixed(0) +
+    //     `(${relativeSpeed.toFixed(2)}) / ` +
+    //     Math.abs(1 * vehicleConfig.steer * speedFactor).toFixed(3) +
+    //     `(${speedFactor.toFixed(3)})`,
+    // )
 
     // gear shifting
     let gear = mutation.gear

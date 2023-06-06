@@ -13,15 +13,6 @@ type PyhsicalCheckpoint = {
   isFinish: boolean
 }
 const PHYSICAL_CHECKPOINTS: PyhsicalCheckpoint[] = [
-  {
-    positionX: -29,
-    positionZ: 50,
-    rotationY: Math.PI,
-    drsZoneStart: false,
-    drsZoneEnd: false,
-    isStart: true,
-    isFinish: false,
-  },
   { positionX: 96.48261260986328, positionZ: 51.10379409790039, rotationY: 3.14, drsZoneStart: false, drsZoneEnd: false, isStart: false, isFinish: false },
   {
     positionX: 174,
@@ -173,18 +164,29 @@ const PHYSICAL_CHECKPOINTS: PyhsicalCheckpoint[] = [
     isStart: false,
     isFinish: false,
   },
-  {
-    positionX: -35,
-    positionZ: 50,
-    rotationY: Math.PI,
-    drsZoneStart: false,
-    drsZoneEnd: false,
-    isStart: false,
-    isFinish: true,
-  },
 ]
 
-export const NUMBER_OF_CHECKPOINTS = PHYSICAL_CHECKPOINTS.length - 3
+const START: PyhsicalCheckpoint = {
+  positionX: -29,
+  positionZ: 50,
+  rotationY: Math.PI,
+  drsZoneStart: false,
+  drsZoneEnd: false,
+  isStart: true,
+  isFinish: false,
+}
+
+const FINISH: PyhsicalCheckpoint = {
+  positionX: -35,
+  positionZ: 50,
+  rotationY: Math.PI,
+  drsZoneStart: false,
+  drsZoneEnd: false,
+  isStart: false,
+  isFinish: true,
+}
+
+export const NUMBER_OF_CHECKPOINTS = PHYSICAL_CHECKPOINTS.length
 
 export function TrackElements() {
   const [actions] = useStore((s) => [s.actions])
@@ -192,12 +194,22 @@ export function TrackElements() {
 
   return (
     <>
+      <Goal
+        args={[0.0001, 2, 18]}
+        onCollideBegin={() => {
+          onStart()
+          if (START.drsZoneStart) onDRS(true)
+          if (START.drsZoneEnd) onDRS(false)
+        }}
+        rotation={[0, START.rotationY, 0]}
+        position={[START.positionX, DEFAUL_TRACK_ELEMENTS_HEIGHT, START.positionZ]}
+      />
       {PHYSICAL_CHECKPOINTS.map((checkpoint, index) => (
         <Goal
-          key={index}
-          args={[0.001, 2, 18]}
+          key={index + 1}
+          args={[0.0001, 2, 18]}
           onCollideBegin={() => {
-            index === 0 ? onStart() : index === PHYSICAL_CHECKPOINTS.length - 1 ? onFinish() : onCheckpoint(index)
+            onCheckpoint(index + 1)
             if (checkpoint.drsZoneStart) onDRS(true)
             if (checkpoint.drsZoneEnd) onDRS(false)
           }}
@@ -205,6 +217,16 @@ export function TrackElements() {
           position={[checkpoint.positionX, DEFAUL_TRACK_ELEMENTS_HEIGHT, checkpoint.positionZ]}
         />
       ))}
+      <Goal
+        args={[0.0001, 2, 18]}
+        onCollideBegin={() => {
+          onFinish()
+          if (FINISH.drsZoneStart) onDRS(true)
+          if (FINISH.drsZoneEnd) onDRS(false)
+        }}
+        rotation={[0, FINISH.rotationY, 0]}
+        position={[FINISH.positionX, DEFAUL_TRACK_ELEMENTS_HEIGHT, FINISH.positionZ]}
+      />
     </>
   )
 }

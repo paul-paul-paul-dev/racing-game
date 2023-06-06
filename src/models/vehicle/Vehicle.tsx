@@ -6,7 +6,7 @@ import { useRaycastVehicle } from '@react-three/cannon'
 import type { PropsWithChildren } from 'react'
 import type { BoxProps, RaycastVehicleProps, WheelInfoOptions } from '@react-three/cannon'
 
-import { AccelerateAudio, BoostAudio, BrakeAudio, EngineAudio, HonkAudio, Skid } from '../../effects'
+import { AccelerateAudio, BoostAudio, BrakeAudio, Dust, EngineAudio, HonkAudio, Skid } from '../../effects'
 import { getState, mutation, useStore } from '../../store'
 import { useToggle } from '../../useToggle'
 import { Wheel } from './Wheel'
@@ -128,7 +128,7 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
           <Wheel ref={wheel} leftSide={!(index % 2)} key={index} />
         ))}
       </>
-      {/* <Dust /> */}
+      <Dust />
       <Skid />
     </group>
   )

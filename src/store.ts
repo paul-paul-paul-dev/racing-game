@@ -16,7 +16,7 @@ export const cameras = ['DEFAULT', 'FIRST_PERSON', 'BIRD_EYE'] as const
 export const dpr = 1.5 as const
 export const levelLayer = 1 as const
 export const maxBoost = 100 as const
-export const position = [-40, 8.5, 51.5] as const
+export const position = [-420, 8.5, -16] as const
 export const rotation = [0, Math.PI / 2, 0] as const
 
 export const vehicleConfig = {
@@ -50,14 +50,14 @@ export type WheelInfo = Required<
 
 export const wheelInfo: WheelInfo = {
   axleLocal: [-1, 0, 0],
-  customSlidingRotationalSpeed: -0.1, // -0.01
+  customSlidingRotationalSpeed: -10, // -0.01
   directionLocal: [0, -1, 0],
-  frictionSlip: 10000, // 1.5
+  frictionSlip: 5.2, // 1.5 // 10000 -> No slipping? // seems like a threshold when to start sliding // maybe for older tires and wet conditions
   radius: 0.38,
-  rollInfluence: 0.01,
-  sideAcceleration: 2.5, // 3
+  rollInfluence: 0.01, // vehicle leaning in curve
+  sideAcceleration: 1.5, // 3
   suspensionRestLength: 0.35,
-  suspensionStiffness: 60,
+  suspensionStiffness: 75,
   useCustomSlidingRotationalSpeed: true, // true
 }
 
@@ -151,7 +151,7 @@ export interface IState extends BaseState {
   chassisBody: RefObject<Group>
   checkpoints: Map<number, Checkpoint>
   timePenalty: number
-  latestCheckpoint: Checkpoint
+  latestCheckpoint: Checkpoint & { timeDifference: number }
   color: string
   controls: Controls
   actionInputMap: ActionInputMap
@@ -217,7 +217,8 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
           const checkpointTime = Date.now() - start
 
           // check if time is better then best time
-          const isBetter = !checkpoint.bestTime || checkpoint.time < checkpoint.time
+          const isBetter = !checkpoint.bestTime || checkpointTime < checkpoint.bestTime
+          const diff = checkpointTime - checkpoint.bestTime
 
           // set the CP values
           checkpoint.time = checkpointTime
@@ -228,7 +229,7 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
           checkpoints.set(id, checkpoint)
 
           // update latestCP
-          latestCheckpoint = checkpoint
+          latestCheckpoint = { ...checkpoint, timeDifference: diff }
 
           // upadte the state
           return { ...state, checkpoints, latestCheckpoint, timePenalty }
@@ -240,6 +241,7 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
       if (start) {
         let timePenaltyFinish = timePenalty
         if (latestCheckpoint.id !== NUMBER_OF_CHECKPOINTS) {
+          // hit the last checkpoint?
           console.log('Penalty' + latestCheckpoint.id + ' ' + NUMBER_OF_CHECKPOINTS)
           timePenaltyFinish += 3
         }
@@ -263,7 +265,7 @@ const useStoreImpl = create<IState>((set: SetState<IState>, get: GetState<IState
       })
     },
     onStart: () => {
-      set({ latestCheckpoint: { id: 0, time: 0, bestTime: 0 } })
+      set({ latestCheckpoint: { id: 0, time: 0, bestTime: 0, timeDifference: 0 } })
 
       set((state) => {
         return { ...state, finished: 0, start: Date.now(), timePenalty: 0 }

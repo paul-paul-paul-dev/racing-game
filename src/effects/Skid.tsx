@@ -25,7 +25,7 @@ export function Skid({ count = 500, opacity = 0.5, size = 0.4 }: SkidProps): JSX
   let index = 0
   useFrame(() => {
     brake = getState().controls.brake
-    if (chassisBody.current && wheels[2].current && wheels[3].current && brake && mutation.speed > 250) {
+    if (chassisBody.current && wheels[2].current && wheels[3].current && brake && mutation.sliding) {
       e.setFromRotationMatrix(m.extractRotation(chassisBody.current.matrix))
       setItemAt(ref.current!, e, wheels[2].current, index++)
       setItemAt(ref.current!, e, wheels[3].current, index++)

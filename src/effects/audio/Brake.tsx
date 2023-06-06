@@ -16,7 +16,8 @@ export const BrakeAudio = () => {
 
   useEffect(() => {
     if (ref.current && sound) {
-      const isBraking = brake && mutation.speed > 250
+      ref.current.setVolume(0.25)
+      const isBraking = brake && mutation.sliding
       if (isBraking && !ref.current.isPlaying) ref.current.play()
       if (!isBraking && ref.current.isPlaying) ref.current.stop()
     }

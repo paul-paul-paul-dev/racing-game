@@ -51,7 +51,7 @@ export const F1Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args 
   const onCollide = useCallback(
     debounce<(e: CollideEvent) => void>((e) => {
       if (e.body.userData.trigger || !getState().sound || !crashAudio.current) return
-      crashAudio.current.setVolume(clamp(e.contact.impactVelocity / 10, 0.2, 1))
+      crashAudio.current.setVolume(clamp(e.contact.impactVelocity / 10, 0.2, 0.5))
       if (!crashAudio.current.isPlaying) crashAudio.current.play()
     }, 200),
     [],

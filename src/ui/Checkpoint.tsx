@@ -4,11 +4,10 @@ import { readableTime } from './LeaderBoard'
 export function Checkpoint() {
   const [latestCheckpoint] = useStore(({ latestCheckpoint }) => [latestCheckpoint])
 
-  const isBetter = !latestCheckpoint.bestTime || latestCheckpoint.time < latestCheckpoint.bestTime
-  const diff = latestCheckpoint.bestTime ? latestCheckpoint.time - latestCheckpoint.bestTime : latestCheckpoint.time
+  const isBetter = !latestCheckpoint.bestTime || latestCheckpoint.timeDifference < 0
 
   const color = isBetter ? 'green' : 'red'
-  const split = `${isBetter ? '' : '+'}${readableTime(diff)}`
+  const split = `${isBetter ? '' : '+'}${readableTime(latestCheckpoint.timeDifference)}`
 
   return (
     <div className="checkpoint">
