@@ -33,6 +33,7 @@ interface TorqueData {
   torque: number
 }
 
+// https://asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html
 export function getTorqueAtRPM(rpm: number): number {
   // Define your torque curve data resembling a Formula 1 car
   /*

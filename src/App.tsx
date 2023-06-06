@@ -49,7 +49,7 @@ export function App(): JSX.Element {
           castShadow
         />
         <PerspectiveCamera makeDefault={editor} fov={75} position={[0, 20, 20]} />
-        <Physics gravity={[0, -9.81, 0]} allowSleep broadphase="SAP" defaultContactMaterial={{ contactEquationRelaxation: 4, friction: 1.6 }} stepSize={1 / 60}>
+        <Physics gravity={[0, -9.81, 0]} allowSleep broadphase="SAP" defaultContactMaterial={{ contactEquationRelaxation: 4, friction: 1.2 }} stepSize={1 / 60}>
           <ToggledDebug scale={1.0001} color="white">
             <Vehicle angularVelocity={[...angularVelocity]} position={[...position]} rotation={[...rotation]}>
               {light && <primitive object={light.target} />}

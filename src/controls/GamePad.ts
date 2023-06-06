@@ -13,7 +13,7 @@ const TRANSMISSION_EFFICIENCY = 1.0
 const MAX_RPM = 15000
 const MIN_RPM = 1000
 const TOP_SPEED_VALUE = 400 //does not correlate to top speed -> examples -> 400 = 158 kph / 250 = 254kph / 300 = 212 kph / 200 = 317 kph
-const DRS_VALUE = 5
+const DRS_VALUE = 7.5
 let automatic = true
 
 function copyToClipboard(text: string): void {
@@ -120,12 +120,19 @@ export function GamePad() {
     actions['right'](gamepads[0].axes[0] > 0.01) // LStick
 
     const relativeSpeed = mutation.speed / (vehicleConfig.maxSpeed + 0.1 * vehicleConfig.maxSpeed)
-    const speedFactor = 1 - Math.pow(Math.sqrt(relativeSpeed), 3) + 2.1 * (relativeSpeed - Math.sqrt(relativeSpeed))
+    const speedFactor = Math.min(1, (-1 / 4) * Math.log(relativeSpeed) - 0.02)
     // trying different speed factors
-    // Math.min(1, (-1/5) * Math.log(relativeSpeed))
+    // 1 - Math.pow(Math.sqrt(relativeSpeed), 3) + 2.1 * (relativeSpeed - Math.sqrt(relativeSpeed))
+    // Math.min(1, ((-1/4) * Math.log(relativeSpeed))+ 0.02)
     // Math.max(0, 1 - Math.sqrt(relativeSpeed))
     const steer = Math.abs(Math.pow(gamepads[0].axes[0], 3) * vehicleConfig.steer * speedFactor) // LStick
-    // console.log(mutation.speed.toFixed(0) + " / " + (Math.abs(1 * vehicleConfig.steer * speedFactor)).toFixed(5))
+    console.log(
+      mutation.speed.toFixed(0) +
+        `(${relativeSpeed.toFixed(2)}) / ` +
+        Math.abs(1 * vehicleConfig.steer * speedFactor).toFixed(3) +
+        `(${speedFactor.toFixed(3)})`,
+    )
+
     // gear shifting
     let gear = mutation.gear
 
