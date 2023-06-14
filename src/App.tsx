@@ -39,8 +39,8 @@ export function App(): JSX.Element {
         <directionalLight
           ref={setLight}
           layers={layers}
-          position={[0, 100, 1200]}
-          intensity={2}
+          position={[0, 1000, 1200]}
+          intensity={1}
           shadow-bias={-0.001}
           shadow-mapSize={[4096, 4096]}
           shadow-camera-left={-1500}
