@@ -49,15 +49,18 @@ export function getTorqueAtRPM(rpm: number): number {
     { rpm: 15000, torque: 0 }
     */
   const torqueCurve: TorqueData[] = [
-    { rpm: 1000, torque: 250 },
-    { rpm: 3000, torque: 300 },
+    { rpm: 0, torque: 0 },
+    { rpm: 1000, torque: 220 },
+    { rpm: 3000, torque: 320 },
     { rpm: 5000, torque: 350 },
-    { rpm: 7000, torque: 420 },
-    { rpm: 9000, torque: 500 },
-    { rpm: 10000, torque: 620 },
-    { rpm: 11000, torque: 650 },
-    { rpm: 13000, torque: 450 },
-    { rpm: 14500, torque: 200 },
+    { rpm: 7000, torque: 380 },
+    { rpm: 9000, torque: 430 },
+    { rpm: 10000, torque: 450 },
+    { rpm: 11000, torque: 500 },
+    { rpm: 12000, torque: 550 },
+    { rpm: 13000, torque: 650 },
+    { rpm: 14500, torque: 450 },
+    { rpm: 14800, torque: 200 },
     { rpm: 15000, torque: 0 },
   ]
 

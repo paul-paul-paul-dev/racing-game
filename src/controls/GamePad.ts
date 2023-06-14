@@ -146,9 +146,9 @@ export function GamePad() {
         gear += 1
       }
 
-      if (rpmTarget > 12800 && mutation.gear !== 8) {
+      if (rpmTarget > 13500 && mutation.gear !== 8) {
         gear += 1
-      } else if (rpmTarget < 8000 && gear !== 1) {
+      } else if (rpmTarget < 9600 && gear !== 1) {
         gear -= 1
       }
     } else {
