@@ -10,11 +10,11 @@ export function Cameras() {
       <PerspectiveCamera makeDefault={!editor && camera !== 'BIRD_EYE'} fov={75} rotation={[0, Math.PI, 0]} position={[0, 10, -20]} />
       <OrthographicCamera
         makeDefault={!editor && camera === 'BIRD_EYE'}
-        position={[0, 100, 0]}
+        position={[0, 10, 0]}
         rotation={[(-1 * Math.PI) / 2, 0, Math.PI]}
         near={1}
         far={20000}
-        zoom={10}
+        zoom={50}
       />
     </>
   )

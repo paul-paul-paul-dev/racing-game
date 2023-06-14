@@ -5,18 +5,26 @@ import { MathUtils } from 'three'
 
 import type { PositionalAudio as PositionalAudioImpl } from 'three'
 
-import { mutation } from '../../store'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { mutation, useStore } from '../../store'
 
 const { lerp } = MathUtils
 
 export const AccelerateAudio = () => {
   const ref = useRef<PositionalAudioImpl>(null)
-  // const maxSpeed = useStore(({ vehicleConfig: { maxSpeed } }) => maxSpeed)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const maxSpeed = useStore(({ vehicleConfig: { maxSpeed } }) => maxSpeed)
 
-  const getVolume = () => ((1.5 * mutation.rpmTarget) / 15000) * 0.2
+  // porsche
+  const getVolume = () => ((1.2 * mutation.rpmTarget) / 15000) * 0.5
+  // f1
+  //   const getVolume = () => ((1.5 * mutation.rpmTarget) / 15000) * 0.2
 
   useFrame((_, delta) => {
     ref.current?.setVolume(getVolume())
+    // porsche
+    // ref.current?.setPlaybackRate(lerp(ref.current.playbackRate,( mutation.rpmTarget / 20000) + (mutation.speed / maxSpeed * 1.4), delta * 10))
+    // f1
     ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 10000 + 0.5, delta * 10))
   })
 

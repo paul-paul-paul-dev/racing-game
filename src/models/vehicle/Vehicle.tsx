@@ -12,7 +12,9 @@ import { useToggle } from '../../useToggle'
 import { Wheel } from './Wheel'
 
 import type { Camera, Controls, WheelInfo } from '../../store'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { F1Chassis } from './F1Chassis'
+import { PorscheChassis } from './PorscheChassis'
 
 const { lerp } = MathUtils
 const v = new Vector3()
@@ -79,7 +81,7 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
       if (camera === 'FIRST_PERSON') {
         v.set(0.3 + (Math.sin(-steeringValue) * speed) / 30, 0.4, -0.1)
       } else if (camera === 'DEFAULT') {
-        v.set((Math.sin(steeringValue) * speed) / 20, 1.25 + (engineValue / 1000) * -0.1, -5 - speed / 50 + (controls.brake ? 1 : 0))
+        v.set((Math.sin(steeringValue) * speed) / 10, 1.25 + (engineValue / 1000) * -0.1, -5 - speed / 50 + (controls.brake ? 1 : 0))
         //   (LEFT-RIGHT Swing,                   ^ , UP-DOWN Swing                   ^ ,              ^              NEAR-FAR Swing)                                        ^
       }
 
@@ -114,7 +116,7 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
 
   return (
     <group>
-      <F1Chassis ref={chassisBody} {...{ angularVelocity, position, rotation }}>
+      <PorscheChassis ref={chassisBody} {...{ angularVelocity, position, rotation }}>
         <ToggledAccelerateAudio />
         <BoostAudio />
         <BrakeAudio />
@@ -122,7 +124,7 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
         <HonkAudio />
         {/* <Boost /> */}
         {children}
-      </F1Chassis>
+      </PorscheChassis>
       <>
         {wheels.map((wheel, index) => (
           <Wheel ref={wheel} leftSide={!(index % 2)} key={index} />

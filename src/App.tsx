@@ -35,6 +35,7 @@ export function App(): JSX.Element {
         {/* <fog attach="fog" args={['white', 0, 500]} /> */}
         <Sky sunPosition={[1000, 1000, 1000]} distance={2000} />
         <ambientLight layers={layers} intensity={0.1} />
+        {/* <Environment background near={1} far={1000} files="images/realistic_blue_skies_on_a_road.hdr"/> */}
         <directionalLight
           ref={setLight}
           layers={layers}
