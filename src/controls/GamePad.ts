@@ -2,6 +2,7 @@ import { mutation, useStore } from '../store'
 import { useEffect, useState } from 'react'
 import { useGamepads } from 'react-gamepads'
 import { calculateDrivingForce, getEngineBreakForce, getGearRatio, getRPMBySpeed, getTorqueAtRPM } from '../models'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Euler, Quaternion, Vector3 } from 'three'
 
 interface GamepadRef {
@@ -17,6 +18,7 @@ const DRS_VALUE = 7.5
 let automatic = true
 
 // for TrackElements position
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function copyToClipboard(text: string): void {
   // Create a temporary input element
   const tempInput = document.createElement('input')
@@ -40,6 +42,7 @@ function copyToClipboard(text: string): void {
 // https://asawicki.info/Mirror/Car%20Physics%20for%20Games/Car%20Physics%20for%20Games.html
 export function GamePad() {
   const [, actions, binding] = useStore(({ actionInputMap, actions, binding }) => [actionInputMap, actions, binding])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [chassisBody, vehicleConfig, wheelInfo, ,] = useStore((s) => [s.chassisBody, s.vehicleConfig, s.wheelInfo, s.wheels, s.api])
 
   const [shiftedUp, setShiftedUp] = useState(false)
@@ -140,6 +143,32 @@ export function GamePad() {
     // gear shifting
     let gear = mutation.gear
 
+    if (gamepads[0].buttons[12].pressed) {
+      // Up
+      automatic = true
+      //   const euler = new Euler().setFromQuaternion(chassisBody.current!.getWorldQuaternion(new Quaternion()))
+
+      //   const text = `{
+      //         positionX: ${chassisBody.current?.getWorldPosition(new Vector3()).x},
+      //         positionZ: ${chassisBody.current?.getWorldPosition(new Vector3()).z},
+      //         rotationY: ${(euler.y + Math.PI / 2).toFixed(2)},
+      //         drsZoneStart: false,
+      //         drsZoneEnd: false,
+      //         isStart: false,
+      //         isFinish: false
+      //       },`
+      //   console.log(text)
+      //   copyToClipboard(text)
+    }
+
+    if (gamepads[0].buttons[13].pressed) {
+      // Down
+      automatic = false
+      if (gear === 1 && mutation.speed < 1) {
+        gear = 0
+      }
+    }
+
     if (automatic) {
       // automatic shifting
       if (gear === 0) {
@@ -148,7 +177,7 @@ export function GamePad() {
 
       if (rpmTarget > 13500 && mutation.gear !== 8) {
         gear += 1
-      } else if (rpmTarget < 9600 && gear !== 1) {
+      } else if (rpmTarget < 9900 && gear !== 1) {
         gear -= 1
       }
     } else {
@@ -172,27 +201,6 @@ export function GamePad() {
     }
 
     actions['honk'](gamepads[0].buttons[10].pressed) // LEFT STICK
-
-    if (gamepads[0].buttons[11].pressed) {
-      // RightStick
-      automatic = !automatic
-    }
-
-    if (gamepads[0].buttons[12].pressed) {
-      const euler = new Euler().setFromQuaternion(chassisBody.current!.getWorldQuaternion(new Quaternion()))
-
-      const text = `{
-            positionX: ${chassisBody.current?.getWorldPosition(new Vector3()).x},
-            positionZ: ${chassisBody.current?.getWorldPosition(new Vector3()).z},
-            rotationY: ${(euler.y + Math.PI / 2).toFixed(2)},
-            drsZoneStart: false,
-            drsZoneEnd: false,
-            isStart: false,
-            isFinish: false
-          },`
-      console.log(text)
-      copyToClipboard(text)
-    }
 
     // ALSO DRS
     if (gamepads[0].buttons[0].pressed && mutation.drsAvailable) {

@@ -14,6 +14,7 @@ import { Wheel } from './Wheel'
 import type { Camera, Controls, WheelInfo } from '../../store'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { F1Chassis } from './F1Chassis'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { PorscheChassis } from './PorscheChassis'
 
 const { lerp } = MathUtils
@@ -54,9 +55,12 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
   let i = 0
   let speed = 0
   let steeringValue = 0
-  // let swaySpeed = 0
-  // let swayTarget = 0
-  // let swayValue = 0
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const swaySpeed = 0
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const swayTarget = 0
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const swayValue = 0
   let myForce = 0
   let mySteer = 0
   let myBreakForce = 0
@@ -81,8 +85,8 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
       if (camera === 'FIRST_PERSON') {
         v.set(0.3 + (Math.sin(-steeringValue) * speed) / 30, 0.4, -0.1)
       } else if (camera === 'DEFAULT') {
-        v.set((Math.sin(steeringValue) * speed) / 10, 1.25 + (engineValue / 1000) * -0.1, -5 - speed / 50 + (controls.brake ? 1 : 0))
-        //   (LEFT-RIGHT Swing,                   ^ , UP-DOWN Swing                   ^ ,              ^              NEAR-FAR Swing)                                        ^
+        v.set((Math.sin(steeringValue) * speed) / 50, 1.25 + (engineValue / 1000) * -0.1, -5 - speed / 50 + (controls.brake ? 1 : 0))
+        //   (LEFT-RIGHT Swing,              20   ^ , UP-DOWN Swing                   ^ ,              ^   5          NEAR-FAR Swing)
       }
 
       // ctrl.left-ctrl.right, up-down, near-far
@@ -97,16 +101,16 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
     }
 
     // // lean chassis
-    // chassisBody.current!.children[0].rotation.z = MathUtils.lerp(chassisBody.current!.children[0].rotation.z, (-steeringValue * speed) / 200, delta * 4)
+    // chassisBody.current!.children[0].rotation.z = MathUtils.lerp(chassisBody.current!.children[0].rotation.z, (-steeringValue * speed) /  1, delta * 10)
 
-    // // Camera sway
-    // swaySpeed = isBoosting ? 60 : 30
-    // swayTarget = isBoosting ? (speed / maxSpeed) * 8 : (speed / maxSpeed) * 2
-    // swayValue = isBoosting ? (speed / maxSpeed + 0.25) * 30 : MathUtils.lerp(swayValue, swayTarget, delta * (isBoosting ? 10 : 20))
+    // Camera sway
+    // swaySpeed = 30
+    // swayTarget =(speed / maxSpeed) * 2
+    // swayValue = MathUtils.lerp(swayValue, swayTarget, delta * 10)
     // defaultCamera.rotation.z += (Math.sin(state.clock.elapsedTime * swaySpeed * 0.9) / 1000) * swayValue
     // defaultCamera.rotation.x += (Math.sin(state.clock.elapsedTime * swaySpeed) / 1000) * swayValue
 
-    // // Vibrations
+    // Vibrations
     // chassisBody.current!.children[0].rotation.x = (Math.sin(state.clock.getElapsedTime() * 20) * (speed / maxSpeed)) / 100
     // chassisBody.current!.children[0].rotation.z = (Math.cos(state.clock.getElapsedTime() * 20) * (speed / maxSpeed)) / 100
   })
@@ -116,15 +120,15 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
 
   return (
     <group>
-      <PorscheChassis ref={chassisBody} {...{ angularVelocity, position, rotation }}>
+      <F1Chassis ref={chassisBody} {...{ angularVelocity, position, rotation }}>
         <ToggledAccelerateAudio />
         <BoostAudio />
-        <BrakeAudio />
+        <BrakeAudio />2
         <ToggledEngineAudio />
         <HonkAudio />
         {/* <Boost /> */}
         {children}
-      </PorscheChassis>
+      </F1Chassis>
       <>
         {wheels.map((wheel, index) => (
           <Wheel ref={wheel} leftSide={!(index % 2)} key={index} />

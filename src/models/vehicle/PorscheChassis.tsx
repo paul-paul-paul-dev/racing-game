@@ -86,7 +86,7 @@ export const PorscheChassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ 
   })
   return (
     <group ref={ref} dispose={null}>
-      <group position={[0, 0, 0]} scale={0.65}>
+      <group position={[0, -0.2, 0]} scale={0.65}>
         <mesh castShadow geometry={nodes.boot002_0001.geometry} material={materials['paint.001']} />
         <mesh castShadow geometry={nodes.boot002_0001_1.geometry} material={materials['full_black.001']} />
         <mesh castShadow geometry={nodes.boot002_0001_2.geometry} material={materials['tex_shiny.001']} />

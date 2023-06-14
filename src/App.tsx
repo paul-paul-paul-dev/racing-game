@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Layers } from 'three'
 import { Canvas } from '@react-three/fiber'
 import { Physics, Debug } from '@react-three/cannon'
@@ -28,6 +28,40 @@ export function App(): JSX.Element {
   const ToggledDebug = useToggle(Debug, 'debug')
   const ToggledEditor = useToggle(Editor, 'editor')
   const ToggledOrbitControls = useToggle(OrbitControls, 'editor')
+
+  useEffect(() => {
+    // Check if the wake lock API is supported
+    if ('wakeLock' in navigator) {
+      let wakeLock: WakeLockSentinel | null = null
+
+      // Function to request a wake lock
+      const requestWakeLock = async () => {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen')
+          console.log('Screen wake lock is active')
+        } catch (error) {
+          console.error('Failed to acquire wake lock:', error)
+        }
+      }
+
+      // Function to release the wake lock
+      const releaseWakeLock = () => {
+        if (wakeLock !== null) {
+          wakeLock.release()
+          console.log('Screen wake lock is released')
+        }
+      }
+
+      // Request wake lock on user interaction
+      document.addEventListener('click', requestWakeLock)
+
+      // Release wake lock when the document is unloaded or visibility changes
+      document.addEventListener('visibilitychange', releaseWakeLock)
+      window.addEventListener('beforeunload', releaseWakeLock)
+    } else {
+      console.warn('Screen wake lock API is not supported')
+    }
+  })
 
   return (
     <Intro>
