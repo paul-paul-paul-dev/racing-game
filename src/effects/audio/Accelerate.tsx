@@ -23,9 +23,9 @@ export const AccelerateAudio = () => {
   useFrame((_, delta) => {
     ref.current?.setVolume(getVolume())
     // porsche
-    // ref.current?.setPlaybackRate(lerp(ref.current.playbackRate,( mutation.rpmTarget / 20000) + (mutation.speed / maxSpeed * 1.4), delta * 10))
+    ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 20000 + (mutation.speed / maxSpeed) * 1.4, delta * 10))
     // f1
-    ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 10000 + 0.5, delta * 10))
+    // ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 10000 + 0.5, delta * 10))
   })
 
   useEffect(() => {

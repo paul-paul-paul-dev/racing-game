@@ -68,7 +68,7 @@ export function Vehicle({ angularVelocity, children, position, rotation }: Vehic
     speed = mutation.speed
     myForce = mutation.force
     mySteer = mutation.steer
-    myBreakForce = mutation.breakForce
+    myBreakForce = Math.max(mutation.breakForce, 10)
 
     engineValue = lerp(engineValue, controls.forward || controls.backward ? myForce * (controls.forward && !controls.backward ? -1 : 1) : 0, delta * 40)
     steeringValue = lerp(steeringValue, controls.left || controls.right ? mySteer * (controls.left && !controls.right ? 1 : -1) : 0, delta * 20)
