@@ -38,14 +38,14 @@ export function App(): JSX.Element {
         <directionalLight
           ref={setLight}
           layers={layers}
-          position={[0, 50, 150]}
-          intensity={1}
+          position={[0, 100, 1200]}
+          intensity={2}
           shadow-bias={-0.001}
           shadow-mapSize={[4096, 4096]}
-          shadow-camera-left={-150}
+          shadow-camera-left={-1500}
           shadow-camera-right={150}
-          shadow-camera-top={150}
-          shadow-camera-bottom={-150}
+          shadow-camera-top={1500}
+          shadow-camera-bottom={-1500}
           castShadow
         />
         <PerspectiveCamera makeDefault={editor} fov={75} position={[0, 20, 20]} />
@@ -61,7 +61,7 @@ export function App(): JSX.Element {
             <Heightmap elementSize={0.5085} position={[327 - 66.5, -3.3, -473 + 213]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
             <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, -1.2, 0]} position={[-104, 1, -189]} />*/}
             <TestHeightmap elementSize={0.8} position={[(1920 * 0.8) / 2, 0, -(1080 * 0.8) / 2]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
-            <TestGround rotation={[Math.PI / 2, 0, Math.PI / 2]} position={[-320, 20, -16]} />
+            <TestGround rotation={[Math.PI / 2, 0, Math.PI / 2]} position={[-320, 30, -16]} />
             {/* <BoundingBox {...{ depth: 1920, height: 10, position: [0, 0, -((1024 * 6) / 2)], width: 1080 }} /> */}
           </ToggledDebug>
         </Physics>

@@ -207,7 +207,7 @@ export function TrackElements() {
       {PHYSICAL_CHECKPOINTS.map((checkpoint, index) => (
         <Goal
           key={index + 1}
-          args={[0.0001, 2, 18]}
+          args={[0.0001, 2, 21]}
           onCollideBegin={() => {
             onCheckpoint(index + 1)
             if (checkpoint.drsZoneStart) onDRS(true)

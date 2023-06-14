@@ -99,7 +99,6 @@ export function GamePad() {
         ) /
           2) *
         forceFactor
-      console.log(forceFactor.toFixed(3) + ' / ' + force.toFixed(3))
       // Math.min(mutation.rpmTarget + 50 * gamepads[0].buttons[7].value, MAX_RPM)
     } else {
       // engine brake when not accelerating
