@@ -16,6 +16,7 @@ const TOP_SPEED_VALUE = 400 //does not correlate to top speed -> examples -> 400
 const DRS_VALUE = 7.5
 let automatic = true
 
+// for TrackElements position
 function copyToClipboard(text: string): void {
   // Create a temporary input element
   const tempInput = document.createElement('input')

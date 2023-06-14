@@ -5,7 +5,7 @@ export function Goal({ args = [1, 1, 1], ...props }) {
 
   return (
     <group {...props}>
-      <mesh position={[0, 0, -(args[2] / 2) - 1]}>
+      <mesh position={[0, 0, -(args[2] / 2) + 1]}>
         <boxBufferGeometry args={[1, 1, 1]} />
         <meshBasicMaterial color="#BDFF9E" />
       </mesh>
