@@ -13,7 +13,7 @@ import { angularVelocity, levelLayer, position, rotation, useStore } from './sto
 import { Clock, Speed, Intro, Editor, Checkpoint } from './ui'
 import { useToggle } from './useToggle'
 import { GamePad } from './controls/GamePad'
-import { TestHeightmap, TestTrack, TrackElements } from './models/test-track'
+import { TestGround, TestHeightmap, TestTrack, TrackElements } from './models/test-track'
 
 const layers = new Layers()
 layers.enable(levelLayer)
@@ -33,7 +33,7 @@ export function App(): JSX.Element {
     <Intro>
       <Canvas key={`${dpr}${shadows}`} dpr={[1, dpr]} shadows={shadows} camera={{ position: [0, 5, 15], fov: 50 }}>
         {/* <fog attach="fog" args={['white', 0, 500]} /> */}
-        <Sky sunPosition={[100, 10, 100]} distance={2000} />
+        <Sky sunPosition={[1000, 1000, 1000]} distance={2000} />
         <ambientLight layers={layers} intensity={0.1} />
         <directionalLight
           ref={setLight}
@@ -61,6 +61,7 @@ export function App(): JSX.Element {
             <Heightmap elementSize={0.5085} position={[327 - 66.5, -3.3, -473 + 213]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
             <Goal args={[0.001, 10, 18]} onCollideBegin={onFinish} rotation={[0, -1.2, 0]} position={[-104, 1, -189]} />*/}
             <TestHeightmap elementSize={0.8} position={[(1920 * 0.8) / 2, 0, -(1080 * 0.8) / 2]} rotation={[-Math.PI / 2, 0, -Math.PI]} />
+            <TestGround rotation={[Math.PI / 2, 0, Math.PI / 2]} position={[-320, 20, -16]} />
             {/* <BoundingBox {...{ depth: 1920, height: 10, position: [0, 0, -((1024 * 6) / 2)], width: 1080 }} /> */}
           </ToggledDebug>
         </Physics>

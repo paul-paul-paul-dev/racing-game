@@ -81,12 +81,12 @@ export const F1Chassis = forwardRef<Group, PropsWithChildren<BoxProps>>(({ args 
   return (
     <group ref={ref} dispose={null}>
       <group position={[0, -0.65, 0]}>
-        <mesh geometry={nodes.Object_15.geometry} material={materials.racecar_1_TGA} />
-        <mesh geometry={nodes.Object_15_1.geometry} material={materials['Default_Material.008']} />
-        <mesh geometry={nodes.Object_15_2.geometry} material={materials['COCKPIT_DAMAGE_TGA.001']} />
-        <mesh geometry={nodes.Object_15_3.geometry} material={materials.racecar_2_TGA} />
-        <mesh geometry={nodes.Object_15_4.geometry} material={materials.racecar_3_TGA} />
-        <mesh geometry={nodes.Object_15_5.geometry} material={materials.racecar_carb_tga} />
+        <mesh castShadow geometry={nodes.Object_15.geometry} material={materials.racecar_1_TGA} />
+        <mesh castShadow geometry={nodes.Object_15_1.geometry} material={materials['Default_Material.008']} />
+        <mesh castShadow geometry={nodes.Object_15_2.geometry} material={materials['COCKPIT_DAMAGE_TGA.001']} />
+        <mesh castShadow geometry={nodes.Object_15_3.geometry} material={materials.racecar_2_TGA} />
+        <mesh castShadow geometry={nodes.Object_15_4.geometry} material={materials.racecar_3_TGA} />
+        <mesh castShadow geometry={nodes.Object_15_5.geometry} material={materials.racecar_carb_tga} />
       </group>
 
       {children}

@@ -8,14 +8,18 @@ import type { GLTF } from 'three-stdlib'
 
 type GLTFResult = GLTF & {
   nodes: {
-    Object_1: THREE.Mesh
-    Object_1_1: THREE.Mesh
-    Object_1_2: THREE.Mesh
+    Track_obj: THREE.Mesh
+    Track_obj_1: THREE.Mesh
+    Track_obj_2: THREE.Mesh
+    Line_1: THREE.Line
+    Line_2: THREE.Line
   }
   materials: {
-    ['Material.006']: THREE.MeshStandardMaterial
-    ['Material.005']: THREE.MeshStandardMaterial
-    ['Material.007']: THREE.MeshStandardMaterial
+    Red: THREE.MeshStandardMaterial
+    Street: THREE.MeshStandardMaterial
+    White: THREE.MeshStandardMaterial
+    Line1: THREE.LineBasicMaterial
+    Line2: THREE.LineBasicMaterial
   }
 }
 
@@ -24,9 +28,17 @@ export function TestTrack(props: JSX.IntrinsicElements['group']) {
 
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.Object_1.geometry} material={materials['Material.006']} />
-      <mesh geometry={nodes.Object_1_1.geometry} material={materials['Material.005']} />
-      <mesh geometry={nodes.Object_1_2.geometry} material={materials['Material.007']} />
+      <mesh receiveShadow geometry={nodes.Track_obj.geometry} material={materials.Red} />
+      <mesh receiveShadow geometry={nodes.Track_obj_1.geometry} material={materials.Street} />
+      <mesh receiveShadow geometry={nodes.Track_obj_2.geometry} material={materials.White} />
+      {/* <lineSegments
+        geometry={nodes.Line_1.geometry}
+        material={materials.Line1}
+      />
+      <lineSegments
+        geometry={nodes.Line_2.geometry}
+        material={materials.Line2}
+      /> */}
     </group>
   )
 }

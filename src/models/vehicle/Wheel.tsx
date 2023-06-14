@@ -35,7 +35,7 @@ export const Wheel = forwardRef<Group, WheelProps>(({ leftSide, ...props }, ref)
       type: 'Kinematic',
       material: 'wheel',
       collisionFilterGroup: 0,
-      shapes: [{ args: [radius, radius, 0.5, 16], rotation: [0, 0, -Math.PI / 2], type: 'Cylinder' }],
+      shapes: [{ args: [radius, radius, 0.55, 32], rotation: [0, 0, -Math.PI / 2], type: 'Cylinder' }],
       ...props,
     }),
     ref,

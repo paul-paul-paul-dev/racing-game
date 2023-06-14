@@ -86,7 +86,9 @@ export function GamePad() {
       rpmTarget = Math.min(rpmFromSpeed, MAX_RPM)
     }
 
-    if (gamepads[0].buttons[7].value > 0 && mutation.gear !== -1) {
+    // driving force
+    if (gamepads[0].buttons[7].value > 0.0001 && mutation.gear !== -1) {
+      const forceFactor = Math.sqrt(gamepads[0].buttons[7].value)
       force =
         (calculateDrivingForce(
           getTorqueAtRPM(mutation.rpmTarget),
@@ -96,8 +98,8 @@ export function GamePad() {
           wheelInfo.radius,
         ) /
           2) *
-        gamepads[0].buttons[7].value
-
+        forceFactor
+      console.log(forceFactor.toFixed(3) + ' / ' + force.toFixed(3))
       // Math.min(mutation.rpmTarget + 50 * gamepads[0].buttons[7].value, MAX_RPM)
     } else {
       // engine brake when not accelerating
@@ -116,17 +118,18 @@ export function GamePad() {
     }
 
     // steering
-    actions['left'](gamepads[0].axes[0] < -0.01) // LStick
-    actions['right'](gamepads[0].axes[0] > 0.01) // LStick
+    actions['left'](gamepads[0].axes[0] < -0.001) // LStick
+    actions['right'](gamepads[0].axes[0] > 0.001) // LStick
 
-    const relativeSpeed = mutation.speed / (vehicleConfig.maxSpeed + 0.1 * vehicleConfig.maxSpeed)
-    const relativeSpeedFactor = (-1 / 4) * Math.log(relativeSpeed < 0.2 ? 0 : relativeSpeed) - 0.02
+    const relativeSpeed = mutation.speed / (vehicleConfig.maxSpeed + 0.15 * vehicleConfig.maxSpeed) // 0 to 1 - (factor * maxSpeed)
+    const relativeSpeedFactor = (-1 / 4) * Math.log(relativeSpeed < 0.2 ? 0 : relativeSpeed) - 0.02 // More sensitive steering at low speeds, less sensitive at high speeds
     const speedFactor = Math.min(1, relativeSpeedFactor)
     // trying different speed factors
     // 1 - Math.pow(Math.sqrt(relativeSpeed), 3) + 2.1 * (relativeSpeed - Math.sqrt(relativeSpeed))
     // Math.min(1, ((-1/4) * Math.log(relativeSpeed))+ 0.02)
     // Math.max(0, 1 - Math.sqrt(relativeSpeed))
-    const steer = Math.abs(Math.pow(gamepads[0].axes[0], 3) * vehicleConfig.steer * speedFactor) // LStick
+    const steer = Math.abs(Math.pow(gamepads[0].axes[0], 3) * vehicleConfig.steer * speedFactor) // LStick again more sensitive at low angle, less sensitiv at high angle
+
     // console.log(
     //   mutation.speed.toFixed(0) +
     //     `(${relativeSpeed.toFixed(2)}) / ` +
