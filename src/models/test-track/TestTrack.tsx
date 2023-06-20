@@ -28,7 +28,7 @@ type GLTFResult = GLTF & {
 export function TestTrack(props: JSX.IntrinsicElements['group']) {
   const { nodes, materials } = useGLTF('models/track.glb') as GLTFResult
 
-  const materialBlack = new THREE.LineBasicMaterial({ color: 'white' })
+  const materialBlack = new THREE.LineBasicMaterial({ color: 'pink' })
   return (
     <group {...props} dispose={null}>
       <mesh receiveShadow geometry={nodes.Track_obj.geometry} material={materials.Red} />
@@ -36,7 +36,7 @@ export function TestTrack(props: JSX.IntrinsicElements['group']) {
       <mesh receiveShadow geometry={nodes.Track_obj_2.geometry} material={materials.White} />
       <lineSegments geometry={nodes.Line_1.geometry} material={materialBlack} />
       <lineSegments geometry={nodes.Line_2.geometry} material={materialBlack} />
-      <mesh receiveShadow geometry={nodes.Ground.geometry} material={materials.Green} />
+      {/* <mesh receiveShadow geometry={nodes.Ground.geometry} material={materials.Green} /> */}
     </group>
   )
 }

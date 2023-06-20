@@ -16,14 +16,14 @@ export const AccelerateAudio = () => {
   const maxSpeed = useStore(({ vehicleConfig: { maxSpeed } }) => maxSpeed)
 
   // porsche
-  const getVolume = () => ((1.2 * mutation.rpmTarget) / 15000) * 0.5
+  // const getVolume = () => ((1.2 * mutation.rpmTarget) / 15000) * 0.5
   // f1
-  //   const getVolume = () => ((1.5 * mutation.rpmTarget) / 15000) * 0.2
+  const getVolume = () => ((1.5 * mutation.rpmTarget) / 15000) * 0.2
 
   useFrame((_, delta) => {
     ref.current?.setVolume(getVolume())
     // porsche
-    // ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 20000 + (mutation.speed / maxSpeed) * 0.5, delta * 10))
+    // ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 18000 + (mutation.speed / maxSpeed) * 0.5, delta * 10))
     // f1
     ref.current?.setPlaybackRate(lerp(ref.current.playbackRate, mutation.rpmTarget / 10000 + 0.5, delta * 10))
   })

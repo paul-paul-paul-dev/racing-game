@@ -67,13 +67,13 @@ export function App(): JSX.Element {
     <Intro>
       <Canvas key={`${dpr}${shadows}`} dpr={[1, dpr]} shadows={shadows} camera={{ position: [0, 5, 15], fov: 50 }}>
         {/* <fog attach="fog" args={['white', 0, 500]} /> */}
-        <Sky sunPosition={[1000, 1000, 1000]} distance={2000} />
+        <Sky sunPosition={[1000, 1000, 1000]} distance={5000} />
         <ambientLight layers={layers} intensity={0.1} />
         {/* <Environment background near={1} far={1000} files="images/realistic_blue_skies_on_a_road.hdr"/> */}
         <directionalLight
           ref={setLight}
           layers={layers}
-          position={[0, 1000, 1200]}
+          position={[-1000, 1000, 1500]}
           intensity={1}
           shadow-bias={-0.001}
           shadow-mapSize={[4096, 4096]}
